@@ -5,114 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tree Info</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f8fff8;
-    color: #2e4d2e;
-    margin: 0;
-    padding: 0;
-  }
-
-  /* Navbar */
-  .navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #ffffff;
-    padding: 10px 15px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    flex-wrap: wrap;
-  }
-  .navbar img {
-    height: 60px;
-    max-width: 100%;
-  }
-  .navbar-title {
-    text-align: center;
-    flex: 1 1 auto;
-    padding: 5px;
-  }
-  .navbar-title h1 {
-    font-size: 20px;
-    margin: 0;
-  }
-  .navbar-title h2 {
-    font-size: 16px;
-    margin: 0;
-    font-weight: normal;
-  }
-  .navbar-title h3 {
-    font-size: 14px;
-    margin: 0;
-    font-weight: normal;
-    color: #555;
-  }
-
-  /* Department Name */
-  .department {
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    color: #4caf50;
-    margin-top: 15px;
-    padding: 0 10px;
-  }
-
-  /* Tree Info Section */
-  .tree-container {
-    max-width: 800px;
-    margin: 20px auto;
-    text-align: center;
-    background: #e8f5e9;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  }
-  .tree-container h2 {
-    font-size: 28px;
-    color: #1b5e20;
-    margin-bottom: 15px;
-  }
-  .tree-container img {
-    max-width: 100%;
-    border-radius: 8px;
-    border: 2px solid #c8e6c9;
-  }
-  .tree-container p {
-    font-size: 16px;
-    margin-top: 15px;
-    line-height: 1.5;
-    text-align: justify;
-  }
-
-  /* Mobile Responsive */
+  body { font-family: Arial, sans-serif; background-color: #f8fff8; color: #2e4d2e; margin: 0; padding: 0; }
+  .navbar { display: flex; align-items: center; justify-content: space-between; background-color: #ffffff; padding: 10px 15px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex-wrap: wrap; }
+  .navbar img { height: 60px; max-width: 100%; }
+  .navbar-title { text-align: center; flex: 1 1 auto; padding: 5px; }
+  .navbar-title h1 { font-size: 20px; margin: 0; }
+  .navbar-title h2 { font-size: 16px; margin: 0; font-weight: normal; }
+  .navbar-title h3 { font-size: 14px; margin: 0; font-weight: normal; color: #555; }
+  .department { text-align: center; font-size: 22px; font-weight: bold; color: #4caf50; margin-top: 15px; padding: 0 10px; }
+  .tree-container { max-width: 800px; margin: 20px auto; text-align: center; background: #e8f5e9; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+  .tree-container h2 { font-size: 28px; color: #1b5e20; margin-bottom: 15px; }
+  .tree-container img { max-width: 100%; border-radius: 8px; border: 2px solid #c8e6c9; }
+  .tree-container p { font-size: 16px; margin-top: 15px; line-height: 1.5; text-align: justify; }
   @media (max-width: 768px) {
-    .navbar {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-    .navbar img {
-      height: 50px;
-    }
-    .navbar-title h1 {
-      font-size: 16px;
-    }
-    .navbar-title h2 {
-      font-size: 14px;
-    }
-    .navbar-title h3 {
-      font-size: 12px;
-    }
-    .department {
-      font-size: 18px;
-    }
-    .tree-container h2 {
-      font-size: 22px;
-    }
-    .tree-container p {
-      font-size: 14px;
-    }
+    .navbar { flex-direction: column; align-items: center; text-align: center; }
+    .navbar img { height: 50px; }
+    .navbar-title h1 { font-size: 16px; }
+    .navbar-title h2 { font-size: 14px; }
+    .navbar-title h3 { font-size: 12px; }
+    .department { font-size: 18px; }
+    .tree-container h2 { font-size: 22px; }
+    .tree-container p { font-size: 14px; }
   }
 </style>
 </head>
@@ -144,20 +57,39 @@ async function loadTree() {
   try {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("id");
-    const res = await fetch("data.json");
-    const trees = await res.json();
-    const tree = trees.find(t => t.id == id);
+    console.log("🔍 URL parameter id:", id);
 
-    if (tree) {
-      document.getElementById("name").textContent = tree.name;
-      document.getElementById("image").src = tree.image;
-      document.getElementById("desc").textContent = tree.description;
-    } else {
+    const res = await fetch("data.json");
+    if (!res.ok) throw new Error("Failed to fetch data.json");
+    const trees = await res.json();
+    console.log("✅ Loaded tree data:", trees);
+
+    const tree = trees.find(t => t.id == id);
+    if (!tree) {
+      console.warn("⚠️ No tree found with id:", id);
       document.querySelector(".tree-container").innerHTML = "<h3>Tree not found</h3>";
+      return;
     }
+
+    console.log("🌳 Selected tree:", tree);
+
+    document.getElementById("name").textContent = tree.name;
+    document.getElementById("desc").textContent = tree.description;
+
+    // Debug image loading
+    const img = document.getElementById("image");
+    img.src = tree.image;
+    img.onerror = function() {
+      console.error("❌ Failed to load image at:", img.src);
+      img.alt = "Image not found";
+    };
+    img.onload = function() {
+      console.log("✅ Image loaded successfully:", img.src);
+    };
+
   } catch (error) {
+    console.error("💥 Error:", error);
     document.querySelector(".tree-container").innerHTML = "<h3>Error loading tree data.</h3>";
-    console.error(error);
   }
 }
 loadTree();
