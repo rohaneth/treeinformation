@@ -141,18 +141,23 @@
 
 <script>
 async function loadTree() {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
-  const res = await fetch("data.json");
-  const trees = await res.json();
-  const tree = trees.find(t => t.id == id);
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const res = await fetch("data.json");
+    const trees = await res.json();
+    const tree = trees.find(t => t.id == id);
 
-  if (tree) {
-    document.getElementById("name").textContent = tree.name;
-    document.getElementById("image").src = tree.image;
-    document.getElementById("desc").textContent = tree.description;
-  } else {
-    document.querySelector(".tree-container").innerHTML = "<h3>Tree not found</h3>";
+    if (tree) {
+      document.getElementById("name").textContent = tree.name;
+      document.getElementById("image").src = tree.image;
+      document.getElementById("desc").textContent = tree.description;
+    } else {
+      document.querySelector(".tree-container").innerHTML = "<h3>Tree not found</h3>";
+    }
+  } catch (error) {
+    document.querySelector(".tree-container").innerHTML = "<h3>Error loading tree data.</h3>";
+    console.error(error);
   }
 }
 loadTree();
