@@ -1,4 +1,4 @@
 [
-  { "id": 1, "name": "Neem Tree", "image": "images/neem.jpg", "description": "Native medicinal tree." },
-  { "id": 2, "name": "Banyan Tree", "image": "images/banyan.jpg", "description": "National tree of India." }
+  { "id": 1, "name": "Neem Tree", "image": "neem.jpg", "description": "Native medicinal tree." },
+  { "id": 2, "name": "Banyan Tree", "image": "banyan.jpg", "description": "National tree of India." }
 ]
