@@ -2,9 +2,10 @@
 <html>
 <head>
   <title>All Tree QR Codes</title>
+  <meta charset="UTF-8">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
-    body { font-family: Arial, sans-serif; }
+    body { font-family: Arial, sans-serif; padding: 20px; }
     .tree {
       display: inline-block;
       text-align: center;
@@ -13,34 +14,52 @@
       padding: 10px;
       border-radius: 8px;
     }
+    h1 { margin-bottom: 20px; }
   </style>
 </head>
 <body>
   <h1>Tree QR Codes</h1>
-  <div id="qr-container"></div>
+  <div id="qr-container">Loading QR codes...</div>
 
   <script>
-    const viewerUrl = "https://rohanether.github.io/trees/viewer.html";
+    // ✅ Change this to your actual GitHub Pages viewer.html URL
+    const viewerUrl = "https://roahanether.github.io/trees/viewer.html";
 
     async function generateAllQRs() {
-      const res = await fetch("data.json");
-      const trees = await res.json();
-      const container = document.getElementById("qr-container");
+      try {
+        const res = await fetch("./data.json"); // fetch JSON from same folder
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
-      trees.forEach(tree => {
-        const div = document.createElement("div");
-        div.className = "tree";
+        const trees = await res.json();
+        const container = document.getElementById("qr-container");
+        container.innerHTML = ""; // clear loading text
 
-        const qrDiv = document.createElement("div");
-        new QRCode(qrDiv, `${viewerUrl}?id=${tree.id}`);
+        trees.forEach(tree => {
+          console.log("Generating QR for:", tree.id, tree.name); // Debug output
 
-        const name = document.createElement("p");
-        name.textContent = tree.name;
+          if (!tree.id) {
+            console.error("❌ Missing ID for tree:", tree);
+            return;
+          }
 
-        div.appendChild(qrDiv);
-        div.appendChild(name);
-        container.appendChild(div);
-      });
+          const div = document.createElement("div");
+          div.className = "tree";
+
+          const qrDiv = document.createElement("div");
+          new QRCode(qrDiv, `${viewerUrl}?id=${tree.id}`);
+
+          const name = document.createElement("p");
+          name.textContent = tree.name;
+
+          div.appendChild(qrDiv);
+          div.appendChild(name);
+          container.appendChild(div);
+        });
+
+      } catch (error) {
+        document.getElementById("qr-container").innerHTML = "❌ Failed to load data.json";
+        console.error("Error loading data.json:", error);
+      }
     }
 
     generateAllQRs();
