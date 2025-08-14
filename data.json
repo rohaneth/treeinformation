@@ -47,28 +47,5 @@
   ],
   "safety_note": "Generally considered safe for external and traditional uses; ingestion should follow traditional dosage guidance."
 }
-,{
-  "id": 3,
-  "name": "Bauhinia racemosa",
-  "image": "bauhinia_racemosa.jpg",
-  "scientific_name": "Bauhinia racemosa",
-  "family": "Fabaceae",
-  "native_region": ["India", "Bangladesh", "Sri Lanka"],
-  "height_meters": "3 to 8",
-  "notable_features": {
-    "fragrance": "Sweet-smelling flowers that attract bees and butterflies",
-    "medicinal_pods": "Pods and leaves used in Ayurveda for various remedies"
-  },
-  "lifespan_years": "40–50",
-  "status": {
-    "conservation_status": "Least Concern",
-    "native_range": "Indian subcontinent"
-  },
-  "traditional_medicinal_uses": [
-    "Leaves and bark used for wound healing and skin ailments",
-    "Pods used as a mild laxative and digestive aid",
-    "Flowers used in some anti-inflammatory and fever remedies"
-  ],
-  "safety_note": "Traditional use is considered safe; avoid excessive consumption of pods or extracts without guidance."
-}]
+]
 
