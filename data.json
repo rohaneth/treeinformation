@@ -1,4 +1,14 @@
 [
-  { "id": 1, "name": "Neem Tree", "image": "neem.jpg", "description": "Native medicinal tree." },
-  { "id": 2, "name": "Banyan Tree", "image": "banyan.jpg", "description": "National tree of India." }
+  { 
+    "id": 1, 
+    "name": "Neem Tree", 
+    "image": "neem.jpg", 
+    "description": "The Neem tree (Azadirachta indica) is a fast-growing evergreen native to the Indian subcontinent. It is renowned for its medicinal properties, with every part of the tree—leaves, bark, seeds, and roots—used in traditional Ayurvedic medicine. Neem is a natural air purifier, provides shade, and is known for its antibacterial, antifungal, and anti-inflammatory qualities. Often called the 'village pharmacy', it plays a vital role in rural healthcare." 
+  },
+  { 
+    "id": 2, 
+    "name": "Banyan Tree", 
+    "image": "banyan.jpg", 
+    "description": "The Banyan tree (Ficus benghalensis) is the national tree of India and is famous for its vast canopy and aerial roots that grow into thick woody trunks. It can live for hundreds of years, providing shelter and shade to countless people and animals. Considered sacred in Indian culture, the Banyan symbolizes longevity, stability, and immortality. Its sprawling structure creates a miniature ecosystem, supporting birds, insects, and other plants." 
+  }
 ]
