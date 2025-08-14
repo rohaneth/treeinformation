@@ -1,31 +1,162 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Tree Info</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tree Info</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f8fff8;
+    color: #2e4d2e;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Navbar */
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #ffffff;
+    padding: 10px 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    flex-wrap: wrap;
+  }
+  .navbar img {
+    height: 60px;
+    max-width: 100%;
+  }
+  .navbar-title {
+    text-align: center;
+    flex: 1 1 auto;
+    padding: 5px;
+  }
+  .navbar-title h1 {
+    font-size: 20px;
+    margin: 0;
+  }
+  .navbar-title h2 {
+    font-size: 16px;
+    margin: 0;
+    font-weight: normal;
+  }
+  .navbar-title h3 {
+    font-size: 14px;
+    margin: 0;
+    font-weight: normal;
+    color: #555;
+  }
+
+  /* Department Name */
+  .department {
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    color: #4caf50;
+    margin-top: 15px;
+    padding: 0 10px;
+  }
+
+  /* Tree Info Section */
+  .tree-container {
+    max-width: 800px;
+    margin: 20px auto;
+    text-align: center;
+    background: #e8f5e9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  .tree-container h2 {
+    font-size: 28px;
+    color: #1b5e20;
+    margin-bottom: 15px;
+  }
+  .tree-container img {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 2px solid #c8e6c9;
+  }
+  .tree-container p {
+    font-size: 16px;
+    margin-top: 15px;
+    line-height: 1.5;
+    text-align: justify;
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .navbar img {
+      height: 50px;
+    }
+    .navbar-title h1 {
+      font-size: 16px;
+    }
+    .navbar-title h2 {
+      font-size: 14px;
+    }
+    .navbar-title h3 {
+      font-size: 12px;
+    }
+    .department {
+      font-size: 18px;
+    }
+    .tree-container h2 {
+      font-size: 22px;
+    }
+    .tree-container p {
+      font-size: 14px;
+    }
+  }
+</style>
 </head>
 <body>
-  <h2 id="name"></h2>
-  <img id="image" style="max-width:300px;">
-  <p id="desc"></p>
 
-  <script>
-    async function loadTree() {
-      const params = new URLSearchParams(window.location.search);
-      const id = params.get("id");
-      const res = await fetch("data.json");
-      const trees = await res.json();
-      const tree = trees.find(t => t.id == id);
+<!-- Navbar -->
+<div class="navbar">
+  <img src="club_logo.jpg" alt="Left Logo">
+  <div class="navbar-title">
+    <h1>SHRI GURU GOBIND SINGHJI INSTITUTE OF ENGINEERING AND TECHNOLOGY</h1>
+    <h2>VISHNUPURI, NANDED-431606</h2>
+    <h3>(Government Aided Autonomous Institute)</h3>
+  </div>
+  <img src="clg_logo.jpg" alt="Right Logo">
+</div>
 
-      if (tree) {
-        document.getElementById("name").textContent = tree.name;
-        document.getElementById("image").src = tree.image;
-        document.getElementById("desc").textContent = tree.description;
-      } else {
-        document.body.innerHTML = "<h3>Tree not found</h3>";
-      }
-    }
+<!-- Department -->
+<div class="department">Department of Electronics and Telecommunication Engineering</div>
 
-    loadTree();
-  </script>
+<!-- Tree Info -->
+<div class="tree-container">
+  <h2 id="name">Tree Name</h2>
+  <img id="image" src="" alt="Tree Image">
+  <p id="desc">Tree description goes here...</p>
+</div>
+
+<script>
+async function loadTree() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+  const res = await fetch("data.json");
+  const trees = await res.json();
+  const tree = trees.find(t => t.id == id);
+
+  if (tree) {
+    document.getElementById("name").textContent = tree.name;
+    document.getElementById("image").src = tree.image;
+    document.getElementById("desc").textContent = tree.description;
+  } else {
+    document.querySelector(".tree-container").innerHTML = "<h3>Tree not found</h3>";
+  }
+}
+loadTree();
+</script>
+
 </body>
 </html>
