@@ -3,160 +3,134 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>3D Tree Info</title>
+<title>Tree Explorer</title>
 <style>
-  body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: #f0f4f8;
-    overflow-x: hidden;
-    perspective: 1000px;
-  }
+  html, body { margin:0; padding:0; height:100%; overflow:hidden; font-family:'Segoe UI', Roboto, Arial, sans-serif; }
+  body { background: radial-gradient(circle at center, #0f2027, #203a43, #2c5364); color:#fff; }
+  
+  /* Navbar */
+  .navbar { display:flex; align-items:center; justify-content:space-between; padding:10px 15px; background: rgba(0,0,0,0.5); backdrop-filter: blur(6px); border-bottom:2px solid #00ffff; position:fixed; width:100%; z-index:10; }
+  .navbar img { height:50px; }
+  .navbar-title { text-align:center; flex:1; padding:0 10px; }
+  .navbar-title h1 { font-size:16px; margin:0; color:#00ffff; text-shadow:1px 1px 4px #000; }
+  .navbar-title h2,h3 { margin:0; font-weight:lighter; font-size:12px; color:#ccc; text-shadow:1px 1px 2px #000; }
 
-  .tree-container {
-    width: 90%;
-    max-width: 1000px;
-    margin: 50px auto;
-    transform-style: preserve-3d;
-  }
+  /* Tree Card Overlay */
+  .tree-container { position:absolute; top:100px; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.6); border-radius:20px; padding:20px; width:90%; max-width:600px; backdrop-filter: blur(10px); box-shadow:0 0 50px #00ffff; z-index:10; color:#00ffff; }
+  .tree-container h2 { text-align:center; font-size:28px; margin-bottom:5px; text-shadow:2px 2px 6px #000; }
+  .tree-container p { text-align:center; font-style:italic; margin-bottom:15px; color:#ccc; }
+  .tree-details { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; }
+  .detail-card { background: rgba(255,255,255,0.05); padding:10px; border-radius:10px; border:1px solid rgba(0,255,255,0.3); text-align:center; animation: float 4s ease-in-out infinite alternate; }
+  .detail-card h4 { margin:0 0 5px; font-size:14px; color:#0ff; }
+  .detail-card ul { list-style:none; padding:0; margin:0; font-size:12px; }
+  .detail-card li { margin:2px 0; }
 
-  .tree-card {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
-    padding: 20px;
-    margin-bottom: 60px;
-    transform-style: preserve-3d;
-    transition: transform 0.3s;
-  }
+  /* Animations */
+  @keyframes float { 0%{transform:translateY(0)} 100%{transform:translateY(-10px)} }
 
-  .tree-card:hover {
-    transform: rotateY(10deg) rotateX(5deg);
-  }
+  /* Canvas Globe */
+  #globe { position:fixed; top:0; left:0; width:100%; height:100%; z-index:1; }
 
-  .tree-image {
-    width: 100%;
-    max-height: 400px;
-    object-fit: cover;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    transition: transform 0.5s;
-  }
-
-  .tree-header h2 {
-    margin: 0;
-    color: #004d99;
-  }
-  .tree-header p {
-    margin: 5px 0;
-    color: #555;
-  }
-
-  .tree-details {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
-    gap: 15px;
-  }
-
-  .detail-card {
-    background: #f9fbfd;
-    border-radius: 10px;
-    padding: 15px;
-    border: 1px solid #e6ecf2;
-    transition: transform 0.3s;
-  }
-
-  .detail-card:hover {
-    transform: translateZ(20px);
-  }
-
-  /* Scroll animation */
-  .tree-card[data-scroll] {
-    transform: translateZ(0px);
-  }
-
+  /* Mobile Adjustments */
+  @media(max-width:600px){ .tree-container{top:80px;padding:15px;} .tree-container h2{font-size:22px;} }
 </style>
 </head>
 <body>
 
-<div class="tree-container" id="treeContainer">
-  <!-- Dynamic tree cards will be injected here -->
+<!-- 3D Globe -->
+<canvas id="globe"></canvas>
+
+<!-- Navbar -->
+<div class="navbar">
+  <img src="club_logo.jpg" alt="Club Logo">
+  <div class="navbar-title">
+    <h1>SHRI GURU GOBIND SINGHJI INSTITUTE OF ENGINEERING AND TECHNOLOGY</h1>
+    <h2>VISHNUPURI, NANDED-431606</h2>
+    <h3>(Government Aided Autonomous Institute)</h3>
+  </div>
+  <img src="clg_logo.jpg" alt="College Logo">
+</div>
+
+<!-- Tree Info -->
+<div class="tree-container">
+  <h2 id="name">Tree Name</h2>
+  <p id="scientific-name"><em>Scientific Name Here</em></p>
+  <div class="tree-details">
+    <div class="detail-card"><h4>Family</h4><p id="family"></p></div>
+    <div class="detail-card"><h4>Native Region</h4><p id="native-region"></p></div>
+    <div class="detail-card"><h4>Height</h4><p id="height"></p></div>
+    <div class="detail-card"><h4>Notable Features</h4><ul id="features"></ul></div>
+    <div class="detail-card"><h4>Lifespan</h4><p id="lifespan"></p></div>
+    <div class="detail-card"><h4>Conservation Status</h4><p id="status"></p></div>
+    <div class="detail-card"><h4>Medicinal Uses</h4><ul id="medicinal-uses"></ul></div>
+    <div class="detail-card"><h4>Safety Note</h4><p id="safety-note"></p></div>
+  </div>
 </div>
 
 <script>
-// Example tree data (dynamic, can come from JSON)
-const trees = [
-  {
-    id: 1,
-    name: "Neem Tree",
-    scientific_name: "Azadirachta indica",
-    image: "neem.jpg",
-    family: "Meliaceae",
-    native_region: ["India", "Myanmar", "Bangladesh", "Pakistan"],
-    height_meters: "15 to 20",
-    notable_features: { fragrance: "Bitter aroma", medicinal_pods: "Used in medicine" },
-    lifespan_years: "100+",
-    status: { conservation_status: "Least Concern", native_range: "Indian subcontinent" },
-    traditional_medicinal_uses: ["Leaf paste for skin", "Bark extracts for medicine"],
-    safety_note: "Non-toxic, safe for humans"
-  },
-  {
-    id: 2,
-    name: "Banyan Tree",
-    scientific_name: "Ficus benghalensis",
-    image: "banyan.jpg",
-    family: "Moraceae",
-    native_region: ["India", "Nepal", "Sri Lanka"],
-    height_meters: "20 to 30",
-    notable_features: { fragrance: "Mild", medicinal_pods: "Medicinal fruit" },
-    lifespan_years: "200+",
-    status: { conservation_status: "Protected", native_range: "Indian subcontinent" },
-    traditional_medicinal_uses: ["Root decoction", "Leaf extract for ailments"],
-    safety_note: "Non-toxic"
+// ----- 3D Globe -----
+const canvas = document.getElementById('globe');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let angle = 0;
+function drawGlobe() {
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0,0,w,h);
+  ctx.save();
+  ctx.translate(w/2,h/2);
+
+  // glowing rotating circles
+  for(let i=0;i<100;i++){
+    const radius = 150 + i*2;
+    const x = radius * Math.cos(angle + i/20);
+    const y = radius * Math.sin(angle + i/20);
+    ctx.beginPath();
+    ctx.arc(x,y,1.5,0,Math.PI*2);
+    ctx.fillStyle = `hsla(${i*3}, 100%, 50%, 0.6)`;
+    ctx.fill();
   }
-];
 
-// Generate cards dynamically
-const container = document.getElementById("treeContainer");
+  // center "Earth" circle
+  ctx.beginPath();
+  ctx.arc(0,0,100,0,Math.PI*2);
+  const grd = ctx.createRadialGradient(0,0,20,0,0,100);
+  grd.addColorStop(0,'#00ffff');
+  grd.addColorStop(1,'#002233');
+  ctx.fillStyle = grd;
+  ctx.fill();
+  
+  ctx.restore();
+  angle += 0.01;
+  requestAnimationFrame(drawGlobe);
+}
+drawGlobe();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
 
-trees.forEach(tree => {
-  const card = document.createElement("div");
-  card.className = "tree-card";
-  card.innerHTML = `
-    <div class="tree-header">
-      <h2>${tree.name}</h2>
-      <p><em>${tree.scientific_name}</em></p>
-    </div>
-    <img class="tree-image" src="${tree.image}" alt="${tree.name}">
-    <div class="tree-details">
-      <div class="detail-card"><h4>Family</h4><p>${tree.family}</p></div>
-      <div class="detail-card"><h4>Native Region</h4><p>${tree.native_region.join(", ")}</p></div>
-      <div class="detail-card"><h4>Height</h4><p>${tree.height_meters} meters</p></div>
-      <div class="detail-card"><h4>Notable Features</h4>
-        <ul>
-          <li>${tree.notable_features.fragrance}</li>
-          <li>${tree.notable_features.medicinal_pods}</li>
-        </ul>
-      </div>
-      <div class="detail-card"><h4>Lifespan</h4><p>${tree.lifespan_years}</p></div>
-      <div class="detail-card"><h4>Conservation Status</h4><p>${tree.status.conservation_status} (${tree.status.native_range})</p></div>
-      <div class="detail-card"><h4>Traditional Uses</h4>
-        <ul>${tree.traditional_medicinal_uses.map(u => `<li>${u}</li>`).join("")}</ul>
-      </div>
-      <div class="detail-card"><h4>Safety Note</h4><p>${tree.safety_note}</p></div>
-    </div>
-  `;
-  container.appendChild(card);
-});
-
-// Optional: Scroll 3D effect
-window.addEventListener("scroll", () => {
-  const scrollY = window.scrollY;
-  document.querySelectorAll(".tree-card").forEach((card, index) => {
-    const depth = (index + 1) * 50;
-    card.style.transform = `translateZ(${depth - scrollY * 0.2}px) rotateY(${scrollY * 0.02}deg)`;
-  });
-});
+// ----- Tree Data Loader -----
+async function loadTree() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const res = await fetch("data.json");
+    const trees = await res.json();
+    let tree = Array.isArray(trees)?trees.find(t=>t.id==id):trees.id==id?trees:null;
+    if(!tree){ document.querySelector(".tree-container").innerHTML="<h3>Tree not found</h3>"; return;}
+    
+    document.getElementById("name").textContent = tree.name;
+    document.getElementById("scientific-name").textContent = tree.scientific_name;
+    document.getElementById("family").textContent = tree.family;
+    document.getElementById("native-region").textContent = tree.native_region.join(", ");
+    document.getElementById("height").textContent = tree.height_meters + " meters";
+    document.getElementById("features").innerHTML = `<li>${tree.notable_features.fragrance || ''}</li><li>${tree.notable_features.medicinal_pods || ''}</li>`;
+    document.getElementById("lifespan").textContent = tree.lifespan_years + " years";
+    document.getElementById("status").textContent = `${tree.status.conservation_status} (${tree.status.native_range})`;
+    document.getElementById("medicinal-uses").innerHTML = (tree.traditional_medicinal_uses||[]).map(u=>`<li>${u}</li>`).join("");
+    document.getElementById("safety-note").textContent = tree.safety_note || '';
+  } catch(e){ console.error(e); document.querySelector(".tree-container").innerHTML="<h3>Error loading tree data</h3>"; }
+}
+loadTree();
 </script>
 
 </body>
