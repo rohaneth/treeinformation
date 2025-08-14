@@ -23,4 +23,52 @@
     "Seeds used in extracts for liver protection and immune boosting"
   ],
   "safety_note": "Neem oil can be toxic if consumed in large quantities, especially for children and pregnant women. External use is generally safe when diluted."
+},{
+  "id": 2,
+  "name": "Aaptycha Zad",
+  "image": "aaptycha_zad.jpg",
+  "scientific_name": "Bauhinia racemosa",
+  "family": "Fabaceae",
+  "native_region": ["India", "Nepal", "Sri Lanka"],
+  "height_meters": "3 to 8",
+  "notable_features": {
+    "fragrance": "Mildly fragrant white or cream flowers",
+    "medicinal_pods": "Flat, elongated pods used in traditional remedies"
+  },
+  "lifespan_years": "40–50",
+  "status": {
+    "conservation_status": "Least Concern",
+    "native_range": "Indian subcontinent"
+  },
+  "traditional_medicinal_uses": [
+    "Bark and leaves used to treat wounds and skin infections",
+    "Pods used in folk remedies for digestive issues",
+    "Leaves sometimes used in anti-inflammatory treatments"
+  ],
+  "safety_note": "Generally considered safe for external and traditional uses; ingestion should follow traditional dosage guidance."
 }
+,{
+  "id": 3,
+  "name": "Bauhinia racemosa",
+  "image": "bauhinia_racemosa.jpg",
+  "scientific_name": "Bauhinia racemosa",
+  "family": "Fabaceae",
+  "native_region": ["India", "Bangladesh", "Sri Lanka"],
+  "height_meters": "3 to 8",
+  "notable_features": {
+    "fragrance": "Sweet-smelling flowers that attract bees and butterflies",
+    "medicinal_pods": "Pods and leaves used in Ayurveda for various remedies"
+  },
+  "lifespan_years": "40–50",
+  "status": {
+    "conservation_status": "Least Concern",
+    "native_range": "Indian subcontinent"
+  },
+  "traditional_medicinal_uses": [
+    "Leaves and bark used for wound healing and skin ailments",
+    "Pods used as a mild laxative and digestive aid",
+    "Flowers used in some anti-inflammatory and fever remedies"
+  ],
+  "safety_note": "Traditional use is considered safe; avoid excessive consumption of pods or extracts without guidance."
+}
+
