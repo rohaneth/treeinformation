@@ -1,0 +1,15 @@
+[
+    {
+      "id": 1,
+      "name": "Neem Tree",
+      "image": "images/neem.jpg",
+      "description": "Native medicinal tree found in India."
+    },
+    {
+      "id": 2,
+      "name": "Banyan Tree",
+      "image": "images/banyan.jpg",
+      "description": "National tree of India, symbol of longevity."
+    }
+  ]
+  

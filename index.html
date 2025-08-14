@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tree QR Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <h2>Add Tree Info</h2>
+  <input id="name" placeholder="Tree Name"><br><br>
+  <input type="file" id="image"><br><br>
+  <textarea id="desc" placeholder="Description"></textarea><br><br>
+  <button onclick="generateQR()">Generate QR</button>
+  <div id="qrcode"></div>
+
+  <script>
+    const viewerUrl = "https://YOUR_GITHUB_USERNAME.github.io/trees/viewer.html";
+
+    function generateQR() {
+      // In this setup, you manually upload the photo to /images and update data.json
+      // Here we just create QR with the next ID
+      const nextId = prompt("Enter the ID for this tree (add this tree manually to data.json and images folder before scanning):");
+      if (!nextId) return;
+
+      const treeLink = `${viewerUrl}?id=${nextId}`;
+      document.getElementById("qrcode").innerHTML = "";
+      new QRCode(document.getElementById("qrcode"), treeLink);
+    }
+  </script>
+</body>
+</html>

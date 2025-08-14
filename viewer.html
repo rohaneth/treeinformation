@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tree Info</title>
+</head>
+<body>
+  <h2 id="name"></h2>
+  <img id="image" style="max-width:300px;">
+  <p id="desc"></p>
+
+  <script>
+    async function loadTree() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get("id");
+      const res = await fetch("data.json");
+      const trees = await res.json();
+      const tree = trees.find(t => t.id == id);
+
+      if (tree) {
+        document.getElementById("name").textContent = tree.name;
+        document.getElementById("image").src = tree.image;
+        document.getElementById("desc").textContent = tree.description;
+      } else {
+        document.body.innerHTML = "<h3>Tree not found</h3>";
+      }
+    }
+
+    loadTree();
+  </script>
+</body>
+</html>
