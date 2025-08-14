@@ -1,208 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tree Info</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fdfdfd;
-      color: #2d2d2d;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tree Information</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+    background-color: #f7f9fc;
+    color: #2d2d2d;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+  }
 
-    .navbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background-color: #ffffff;
-      padding: 10px 15px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-      flex-wrap: wrap;
-    }
+  /* Navbar */
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #004d99, #0073e6);
+    padding: 10px 20px;
+    color: white;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  }
+  .navbar img {
+    height: 60px;
+  }
+  .navbar-title {
+    text-align: center;
+    flex: 1;
+    padding: 0 15px;
+  }
+  .navbar-title h1 {
+    font-size: 20px;
+    margin: 0;
+  }
+  .navbar-title h2 {
+    font-size: 14px;
+    margin: 4px 0 0;
+    font-weight: normal;
+  }
+  .navbar-title h3 {
+    font-size: 12px;
+    margin: 0;
+    font-weight: lighter;
+  }
 
-    .navbar img {
-      height: 60px;
-      max-width: 100%;
-    }
+  /* Department */
+  .department {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #004d99;
+    margin: 15px auto;
+    padding: 0 10px;
+  }
 
-    .navbar-title {
-      text-align: center;
-      flex: 1 1 auto;
-      padding: 5px;
-    }
+  /* Tree Card */
+  .tree-container {
+    max-width: 950px;
+    margin: 20px auto;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .tree-header {
+    background: #e6f0ff;
+    padding: 20px;
+    text-align: center;
+  }
+  .tree-header h2 {
+    font-size: 28px;
+    margin: 0;
+    color: #003366;
+  }
+  .tree-header p {
+    font-size: 16px;
+    margin: 5px 0 0;
+    color: #666;
+  }
+  .tree-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+  }
 
-    .navbar-title h1 {
-      font-size: 20px;
-      margin: 0;
-      color: #1a1a1a;
-    }
+  /* Details Section */
+  .tree-details {
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    gap: 15px;
+  }
+  .detail-card {
+    background: #f9fbfd;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid #e6ecf2;
+  }
+  .detail-card h4 {
+    margin-top: 0;
+    color: #004d99;
+    font-size: 16px;
+  }
 
-    .navbar-title h2 {
-      font-size: 16px;
-      margin: 0;
-      font-weight: normal;
-      color: #555;
-    }
+  /* Lists */
+  ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  li {
+    margin-bottom: 5px;
+  }
 
-    .navbar-title h3 {
-      font-size: 14px;
-      margin: 0;
-      font-weight: normal;
-      color: #888;
-    }
-
-    .department {
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
-      color: #0056b3;
-      margin-top: 15px;
-      padding: 0 10px;
-    }
-
-    .tree-container {
-      max-width: 800px;
-      margin: 20px auto;
-      text-align: center;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-
-    .tree-container h2 {
-      font-size: 28px;
-      color: #003366;
-      margin-bottom: 15px;
-    }
-
-    .tree-container img {
-      max-width: 100%;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      background-color: #fafafa;
-      transition: transform 0.2s ease;
-    }
-
-    .tree-container img:hover {
-      transform: scale(1.02);
-    }
-
-    .tree-container p {
-      font-size: 16px;
-      margin-top: 15px;
-      line-height: 1.5;
-      text-align: justify;
-      color: #333;
-    }
-
-    @media (max-width: 768px) {
-      .navbar {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-      }
-
-      .navbar img {
-        height: 50px;
-      }
-
-      .navbar-title h1 {
-        font-size: 16px;
-      }
-
-      .navbar-title h2 {
-        font-size: 14px;
-      }
-
-      .navbar-title h3 {
-        font-size: 12px;
-      }
-
-      .department {
-        font-size: 18px;
-      }
-
-      .tree-container h2 {
-        font-size: 22px;
-      }
-
-      .tree-container p {
-        font-size: 14px;
-      }
-    }
-  </style>
+  /* Responsive */
+  @media (max-width: 768px) {
+    .navbar img { height: 50px; }
+    .navbar-title h1 { font-size: 16px; }
+    .tree-header h2 { font-size: 22px; }
+  }
+</style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <div class="navbar">
-    <img src="club_logo.jpg" alt="Left Logo">
-    <div class="navbar-title">
-      <h1>SHRI GURU GOBIND SINGHJI INSTITUTE OF ENGINEERING AND TECHNOLOGY</h1>
-      <h2>VISHNUPURI, NANDED-431606</h2>
-      <h3>(Government Aided Autonomous Institute)</h3>
-    </div>
-    <img src="clg_logo.jpg" alt="Right Logo">
+<!-- Navbar -->
+<div class="navbar">
+  <img src="club_logo.jpg" alt="Club Logo">
+  <div class="navbar-title">
+    <h1>SHRI GURU GOBIND SINGHJI INSTITUTE OF ENGINEERING AND TECHNOLOGY</h1>
+    <h2>VISHNUPURI, NANDED-431606</h2>
+    <h3>(Government Aided Autonomous Institute)</h3>
   </div>
+  <img src="clg_logo.jpg" alt="College Logo">
+</div>
 
-  <!-- Department -->
-  <div class="department">
-    Department of Electronics and Telecommunication Engineering
-  </div>
+<!-- Department -->
+<div class="department">Department of Electronics and Telecommunication Engineering</div>
 
-  <!-- Tree Info -->
-  <div class="tree-container">
+<!-- Tree Info -->
+<div class="tree-container">
+  <div class="tree-header">
     <h2 id="name">Tree Name</h2>
-    <img id="image" src="" alt="Tree Image">
-    <p id="desc">Tree description goes here...</p>
+    <p id="scientific-name"><em>Scientific name here</em></p>
   </div>
+  <img id="image" class="tree-image" src="" alt="Tree Image">
+  <div class="tree-details">
+    <div class="detail-card">
+      <h4>Family</h4>
+      <p id="family"></p>
+    </div>
+    <div class="detail-card">
+      <h4>Native Region</h4>
+      <p id="native-region"></p>
+    </div>
+    <div class="detail-card">
+      <h4>Height</h4>
+      <p id="height"></p>
+    </div>
+    <div class="detail-card">
+      <h4>Notable Features</h4>
+      <ul id="features"></ul>
+    </div>
+    <div class="detail-card">
+      <h4>Lifespan</h4>
+      <p id="lifespan"></p>
+    </div>
+    <div class="detail-card">
+      <h4>Conservation Status</h4>
+      <p id="status"></p>
+    </div>
+    <div class="detail-card">
+      <h4>Traditional Medicinal Uses</h4>
+      <ul id="medicinal-uses"></ul>
+    </div>
+    <div class="detail-card">
+      <h4>Safety Note</h4>
+      <p id="safety-note"></p>
+    </div>
+  </div>
+</div>
 
-  <script>
-    async function loadTree() {
-      try {
-        const params = new URLSearchParams(window.location.search);
-        const id = params.get("id");
-        console.log("🔍 URL parameter id:", id);
+<script>
+async function loadTree() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    console.log("🔍 URL parameter id:", id);
 
-        const res = await fetch("data.json");
-        if (!res.ok) throw new Error("Failed to fetch data.json");
-        const trees = await res.json();
-        console.log("✅ Loaded tree data:", trees);
+    const res = await fetch("data.json");
+    if (!res.ok) throw new Error("Failed to fetch data.json");
+    const trees = await res.json();
+    console.log("✅ Loaded tree data:", trees);
 
-        const tree = trees.find(t => t.id == id);
-        if (!tree) {
-          console.warn("⚠️ No tree found with id:", id);
-          document.querySelector(".tree-container").innerHTML = "<h3>Tree not found</h3>";
-          return;
-        }
-
-        console.log("🌳 Selected tree:", tree);
-
-        document.getElementById("name").textContent = tree.name;
-        document.getElementById("desc").textContent = tree.description;
-
-        // Debug image loading
-        const img = document.getElementById("image");
-        img.src = tree.image;
-        img.onerror = function () {
-          console.error("❌ Failed to load image at:", img.src);
-          img.alt = "Image not found";
-        };
-        img.onload = function () {
-          console.log("✅ Image loaded successfully:", img.src);
-        };
-
-      } catch (error) {
-        console.error("💥 Error:", error);
-        document.querySelector(".tree-container").innerHTML = "<h3>Error loading tree data.</h3>";
-      }
+    const tree = trees.find(t => t.id == id);
+    if (!tree) {
+      console.warn("⚠️ No tree found with id:", id);
+      document.querySelector(".tree-container").innerHTML = "<h3>Tree not found</h3>";
+      return;
     }
-    loadTree();
-  </script>
+
+    // Populate data
+    document.getElementById("name").textContent = tree.name;
+    document.getElementById("scientific-name").textContent = tree.scientific_name;
+    document.getElementById("family").textContent = tree.family;
+    document.getElementById("native-region").textContent = tree.native_region.join(", ");
+    document.getElementById("height").textContent = tree.height_meters + " meters";
+    document.getElementById("features").innerHTML = `
+      <li>${tree.notable_features.fragrance}</li>
+      <li>${tree.notable_features.medicinal_pods}</li>
+    `;
+    document.getElementById("lifespan").textContent = tree.lifespan_years + " years";
+    document.getElementById("status").textContent = `${tree.status.conservation_status} (${tree.status.native_range})`;
+    document.getElementById("medicinal-uses").innerHTML = tree.traditional_medicinal_uses.map(use => `<li>${use}</li>`).join("");
+    document.getElementById("safety-note").textContent = tree.safety_note;
+
+    const img = document.getElementById("image");
+    img.src = tree.image || "placeholder.jpg";
+    img.onerror = () => {
+      console.error("❌ Failed to load image at:", img.src);
+      img.alt = "Image not found";
+    };
+
+  } catch (error) {
+    console.error("💥 Error:", error);
+    document.querySelector(".tree-container").innerHTML = "<h3>Error loading tree data.</h3>";
+  }
+}
+loadTree();
+</script>
 
 </body>
 </html>
