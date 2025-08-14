@@ -86,6 +86,7 @@
     max-height: 400px;
     object-fit: cover;
     border-bottom: 1px solid #ddd;
+    background-color: #fafafa;
   }
 
   /* Details Section */
@@ -195,7 +196,17 @@ async function loadTree() {
     const trees = await res.json();
     console.log("✅ Loaded tree data:", trees);
 
-    const tree = trees.find(t => t.id == id);
+    let tree;
+    if (Array.isArray(trees)) {
+      // Multiple trees
+      tree = trees.find(t => t.id == id);
+    } else {
+      // Single tree object
+      if (trees.id == id) {
+        tree = trees;
+      }
+    }
+
     if (!tree) {
       console.warn("⚠️ No tree found with id:", id);
       document.querySelector(".tree-container").innerHTML = "<h3>Tree not found</h3>";
@@ -222,6 +233,7 @@ async function loadTree() {
     img.onerror = () => {
       console.error("❌ Failed to load image at:", img.src);
       img.alt = "Image not found";
+      img.src = "placeholder.jpg";
     };
 
   } catch (error) {
