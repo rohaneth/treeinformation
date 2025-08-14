@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>All Tree QR Codes</title>
   <meta charset="UTF-8">
+  <title>All Tree QR Codes</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
@@ -15,6 +15,7 @@
       border-radius: 8px;
     }
     h1 { margin-bottom: 20px; }
+    .error { color: red; font-weight: bold; }
   </style>
 </head>
 <body>
@@ -22,20 +23,42 @@
   <div id="qr-container">Loading QR codes...</div>
 
   <script>
-    // ✅ Change this to your actual GitHub Pages viewer.html URL
     const viewerUrl = "https://rohaneth.github.io/treeinformation/viewer.html";
 
     async function generateAllQRs() {
+      const container = document.getElementById("qr-container");
+
       try {
-        const res = await fetch("./data.json"); // fetch JSON from same folder
+        console.log("Fetching data.json...");
+        const res = await fetch("./data.json");
+
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
 
-        const trees = await res.json();
-        const container = document.getElementById("qr-container");
+        let trees = await res.json();
+        console.log("Raw fetched data:", trees);
+
+        // Normalize to array
+        if (!Array.isArray(trees)) {
+          if (trees.trees) {
+            console.log("Detected trees wrapper, using trees.trees array");
+            trees = trees.trees;
+          } else {
+            console.warn("Data is not an array, wrapping single object in array");
+            trees = [trees];
+          }
+        }
+
+        console.log("Final trees array:", trees);
+
         container.innerHTML = ""; // clear loading text
 
+        if (trees.length === 0) {
+          container.innerHTML = "No trees found in data.json";
+          return;
+        }
+
         trees.forEach(tree => {
-          console.log("Generating QR for:", tree.id, tree.name); // Debug output
+          console.log("Generating QR for:", tree.id, tree.name);
 
           if (!tree.id) {
             console.error("❌ Missing ID for tree:", tree);
@@ -56,8 +79,10 @@
           container.appendChild(div);
         });
 
+        console.log("✅ All QR codes generated successfully");
+
       } catch (error) {
-        document.getElementById("qr-container").innerHTML = "❌ Failed to load data.json";
+        container.innerHTML = `<p class="error">❌ Failed to load data.json</p>`;
         console.error("Error loading data.json:", error);
       }
     }
