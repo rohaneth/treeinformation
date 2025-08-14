@@ -1,25 +1,26 @@
 {
-  "id": 3,
-  "name": "Golden Shower Tree",
-  "scientific_name": "Cassia fistula",
-  "family": "Fabaceae",
-  "native_region": ["India", "Sri Lanka", "Nepal"],
-  "height_meters": "10 to 20",
+  "id": 1,
+  "name": "Neem Tree",
+  "image": "neem.jpg",
+  "scientific_name": "Azadirachta indica",
+  "family": "Meliaceae",
+  "native_region": ["India", "Myanmar", "Bangladesh", "Pakistan"],
+  "height_meters": "15 to 20",
   "notable_features": {
-    "fragrance": "Mildly sweet scent that attracts bees and butterflies",
-    "medicinal_pods": "Long cylindrical seed pods used in traditional medicine"
+    "fragrance": "Distinct bitter aroma from leaves and bark",
+    "medicinal_pods": "Small, olive-like fruits used in traditional medicine and oil extraction"
   },
-  "lifespan_years": "30–40",
+  "lifespan_years": "150–200",
   "status": {
     "conservation_status": "Least Concern",
-    "native_range": "Indian subcontinent and Southeast Asia"
+    "native_range": "Indian subcontinent and tropical regions of Southeast Asia"
   },
   "traditional_medicinal_uses": [
-    "Mild laxative; used to treat constipation and detoxify the digestive tract",
-    "Anti-inflammatory, antimicrobial; used for skin conditions and wound healing",
-    "Liver-protective, especially in cases of drug-induced toxicity",
-    "Used in decoctions to treat fever, skin diseases, and digestive issues",
-    "Contain galactomannan; used in traditional remedies for various internal ailments"
+    "Leaves used as an antiseptic, antifungal, and antibacterial agent",
+    "Bark decoctions used for malaria, fever, and skin diseases",
+    "Neem oil used to treat dandruff, lice, and skin conditions like eczema",
+    "Twigs traditionally used as natural toothbrushes (chewing sticks)",
+    "Seeds used in extracts for liver protection and immune boosting"
   ],
-  "safety_note": "While Cassia fistula is widely used in traditional medicine, it’s important to approach its use with care due to potential toxicity, especially from its seeds."
+  "safety_note": "Neem oil can be toxic if consumed in large quantities, especially for children and pregnant women. External use is generally safe when diluted."
 }
