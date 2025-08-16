@@ -1,334 +1,133 @@
+You said:
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-<title>Tree Information Viewer • 3D & Responsive</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tree Information Viewer</title>
 <style>
-  :root{
-    --bg: #0b1f15;
-    --bg2: #0f2a1b;
-    --text: #eaf7ee;
-    --muted: #c6e3cf;
-    --brand: #3ddc84; /* vibrant leaf */
-    --brand-2:#12b886; /* deep green */
-    --card:#0e2219cc; /* glass */
-    --stroke:#1c3b2c;
-    --shadow: 0 10px 30px rgba(0,0,0,.35);
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f9fc;
+    margin: 0;
+    padding: 0;
+    color: #2d2d2d;
   }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:var(--text);
-    background: radial-gradient(1200px 700px at 10% -10%, #1a5137 0%, transparent 60%),
-                radial-gradient(1000px 800px at 110% 10%, #164731 0%, transparent 60%),
-                linear-gradient(180deg,var(--bg),var(--bg2));
-    overflow-x:hidden;
-    -webkit-tap-highlight-color: transparent;
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #2e7d32;
+    padding: 10px 20px;
+    color: white;
   }
-  /* Floating particle canvas sits behind */
-  canvas.bg {
-    position:fixed; inset:0; z-index:-2; filter: blur(0.3px);
+  header img {
+    height: 50px;
   }
-  /* Subtle animated gradient veil */
-  .veil{ position:fixed; inset:-20vh -20vw; z-index:-1; pointer-events:none;
-         background: conic-gradient(from 180deg at 50% 50%, #0b1f15 0deg, #184b33 120deg, #0b1f15 240deg, #103422 360deg);
-         opacity:.35; animation: swirl 18s linear infinite; mix-blend-mode: overlay; }
-  @keyframes swirl{ to{ transform: rotate(360deg);} }
-
-  header{
-    position:sticky; top:0; z-index:10;
-    backdrop-filter: saturate(140%) blur(8px);
-    background: linear-gradient(180deg, rgba(20,50,36,.85), rgba(20,50,36,.45));
-    border-bottom:1px solid var(--stroke);
+  main {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
-  .nav{ max-width:1100px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; gap:12px; }
-  .brand{ display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px; }
-  .brand img{ width:40px; height:40px; object-fit:cover; border-radius:10px; border:1px solid var(--stroke); box-shadow: var(--shadow); }
-  .brand span{ font-size:18px; }
-  .spacer{ flex:1 }
-  .btn{ appearance:none; border:none; color:#052418; background:linear-gradient(180deg,var(--brand),var(--brand-2));
-        padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:700; box-shadow:0 8px 20px rgba(61,220,132,.28);
-        transform: translateZ(0); transition: transform .15s ease, box-shadow .15s ease, opacity .2s ease; }
-  .btn:hover{ transform: translateY(-1px); box-shadow:0 10px 28px rgba(61,220,132,.34) }
-  .btn:active{ transform: translateY(0) scale(.98) }
-  .btn.secondary{ background:#102c1f; color:var(--muted); border:1px solid var(--stroke); box-shadow:none }
-
-  main{ max-width:1100px; margin:22px auto; padding:16px; }
-  .grid{ display:grid; grid-template-columns: 1.1fr .9fr; gap:20px; align-items:stretch }
-  @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
-
-  .card{ background: var(--card); border:1px solid var(--stroke); border-radius:22px; box-shadow: var(--shadow);
-         overflow:hidden; transform-style: preserve-3d; will-change: transform; }
-  .card-inner{ padding:18px 18px 22px; }
-
-  h1{ margin:10px 0 4px; font-size: clamp(24px, 3vw, 36px); letter-spacing:.2px }
-  h2{ margin:18px 0 8px; font-size: clamp(18px, 2.4vw, 24px); color:#c9f7da }
-  p, li{ color: var(--muted); line-height:1.7; }
-  ul{ margin:0; padding-left:18px }
-
-  .hero-media{ position:relative; height:min(56vh, 520px); background:linear-gradient(180deg, rgba(18,55,37,.6), rgba(18,55,37,.25));
-               display:grid; place-items:center; }
-  /* 3D canvas */
-  #tree3d{ width:100%; height:100%; display:block; }
-  .badge{ position:absolute; top:10px; left:10px; background:#103a28; border:1px solid var(--stroke); padding:6px 10px; border-radius:999px; color:#c7f0d8; font-weight:700; font-size:12px; letter-spacing:.3px }
-
-  .meta-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:8px }
-  .chip{ padding:8px 10px; background:#0c2b1d; border:1px solid var(--stroke); border-radius:12px; font-weight:600; color:#daf4e5 }
-
-  .status{ background:linear-gradient(180deg,#0f2e20,#0b2419); border-left:4px solid var(--brand-2); padding:12px; border-radius:12px; border:1px solid var(--stroke); }
-
-  .skeleton{ position:relative; overflow:hidden; background:#113626; border-radius:14px; height:220px; border:1px solid var(--stroke) }
-  .skeleton::after{ content:""; position:absolute; inset:0; background: linear-gradient(90deg, transparent, rgba(255,255,255,.05), transparent); animation: shimmer 1.6s infinite; }
-  @keyframes shimmer{ from{ transform: translateX(-100%) } to{ transform: translateX(100%) } }
-
-  footer{ max-width:1100px; margin:24px auto 60px; padding:0 16px; opacity:.9; }
-  .foot{ display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
-
-  /* Reduce motion respect */
-  @media (prefers-reduced-motion: reduce){
-    .veil{ animation:none }
-    .btn{ transition:none }
+  .tree-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    margin-bottom: 20px;
+    border-radius: 6px;
+  }
+  h1 {
+    color: #1b5e20;
+    margin-bottom: 10px;
+  }
+  h2 {
+    margin-top: 20px;
+    color: #388e3c;
+  }
+  ul {
+    margin: 0;
+    padding-left: 20px;
+  }
+  .status {
+    background-color: #e8f5e9;
+    padding: 10px;
+    border-left: 4px solid #2e7d32;
+    margin-bottom: 20px;
   }
 </style>
 </head>
 <body>
-  <canvas class="bg" id="bg"></canvas>
-  <div class="veil" aria-hidden="true"></div>
 
-  <header>
-    <nav class="nav">
-      <div class="brand" id="brand">
-        <img src="clg_logo.jpg" alt="College Logo" onerror="this.style.opacity=.15" />
-        <span>Tree Information Club</span>
-      </div>
-      <div class="spacer"></div>
-      <button class="btn secondary" id="copyLinkBtn" title="Copy sharable link">Share</button>
-      <button class="btn" id="themeBtn" title="Boost contrast">Glow</button>
-    </nav>
-  </header>
+<header>
+  <img src="clg_logo.jpg" alt="College Logo">
+  <h2>Tree Information Club</h2>
+  <img src="club_logo.jpg" alt="Club Logo">
+</header>
 
-  <main>
-    <section class="grid" id="tiltCard" data-tilt>
-      <article class="card">
-        <div class="hero-media">
-          <span class="badge" id="badge">Loading…</span>
-          <canvas id="tree3d" aria-label="3D tree visualization"></canvas>
-        </div>
-        <div class="card-inner" id="tree-card">
-          <div class="skeleton" id="loader"></div>
-        </div>
-      </article>
+<main>
+  <div id="tree-info">
+    <p>Loading tree data...</p>
+  </div>
+</main>
 
-      <aside class="card">
-        <div class="card-inner">
-          <h2>Scan a QR → Open Details</h2>
-          <p>Attach a QR code on each tree. The code links to this page with <code>?id=1</code>, <code>?id=2</code>, etc. Visitors get a live 3D view, key facts, medicinal uses, and safety notes.</p>
-          <div class="meta-row" id="meta-row"></div>
-          <h2>Quick Actions</h2>
-          <div class="meta-row">
-            <button class="btn secondary" id="backBtn" title="Back to list">Back</button>
-            <a class="btn" id="openData" href="data.json" target="_blank" rel="noopener">View data.json</a>
-          </div>
-        </div>
-      </aside>
-    </section>
-  </main>
+<script>
+async function loadTree() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const treeId = parseInt(params.get("id"), 10);
 
-  <footer>
-    <div class="foot">
-      <small>Tip: Move your mouse / drag your finger to rotate the 3D tree. Tilt the card with your cursor. Works offline with fallback data.</small>
-    </div>
-  </footer>
+    const response = await fetch("data.json");
+    const trees = await response.json();
 
-  <!-- Three.js for 3D -->
-  <script src="https://unpkg.com/three@0.160.1/build/three.min.js"></script>
-  <script src="https://unpkg.com/three@0.160.1/examples/js/controls/OrbitControls.js"></script>
+    const tree = trees.find(t => t.id === treeId);
 
-  <script>
-  // ---------- Utilities ----------
-  const qs = (s, el=document)=>el.querySelector(s);
-  const qsa = (s, el=document)=>[...el.querySelectorAll(s)];
-  function getId(){ const p=new URLSearchParams(location.search); const id=Number(p.get('id')); return Number.isFinite(id)?id:1; }
-  function safeJoin(a){ return Array.isArray(a)?a.join(', '):String(a||'—'); }
-  function escapeHTML(s){ return String(s||'').replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c])); }
-
-  // ---------- Dynamic theme "Glow" ----------
-  const themeBtn = qs('#themeBtn');
-  let glowOn=false;
-  themeBtn.addEventListener('click',()=>{
-    glowOn=!glowOn; document.documentElement.style.setProperty('--brand', glowOn?'#7dffb0':'#3ddc84');
-    document.documentElement.style.setProperty('--brand-2', glowOn?'#20d39b':'#12b886');
-    document.body.style.boxShadow = glowOn? 'inset 0 0 150px rgba(45,255,150,.12)': 'none';
-  });
-
-  // ---------- Copy link ----------
-  qs('#copyLinkBtn').addEventListener('click', async ()=>{
-    const url = location.origin + location.pathname + '?id=' + getId();
-    try{ await navigator.clipboard.writeText(url); const b=qs('#copyLinkBtn'); b.textContent='Copied!'; setTimeout(()=>b.textContent='Share',1200);}catch(e){ alert(url); }
-  });
-
-  // ---------- Back button ----------
-  qs('#backBtn').addEventListener('click',()=>{ history.length>1?history.back():location.href = location.pathname; });
-
-  // ---------- Particles background (mouse + touch aware) ----------
-  (function particles(){
-    const c = qs('#bg'); const ctx = c.getContext('2d');
-    let w,h, dpr = Math.min(window.devicePixelRatio||1, 2);
-    const N = 70; const dots=[]; let mx=-9999,my=-9999;
-    function resize(){ w= c.width = innerWidth * dpr; h = c.height = innerHeight * dpr; c.style.width=innerWidth+'px'; c.style.height=innerHeight+'px'; }
-    function Dot(){ this.x=Math.random()*w; this.y=Math.random()*h; this.vx=(Math.random()-.5)*.2; this.vy=(Math.random()-.5)*.2; this.r= (Math.random()*2+0.5)*dpr; }
-    for(let i=0;i<N;i++) dots.push(new Dot());
-    function step(){ ctx.clearRect(0,0,w,h); ctx.globalAlpha=.6; ctx.fillStyle='#1b5e20'; dots.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; if(p.x<0||p.x>w) p.vx*=-1; if(p.y<0||p.y>h) p.vy*=-1; const dx=p.x-mx*dpr, dy=p.y-my*dpr; const ds=dx*dx+dy*dy; if(ds<14000){ p.vx+=dx*-.00003; p.vy+=dy*-.00003; }
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); }); requestAnimationFrame(step); }
-    function move(e){ if(e.touches){ mx=e.touches[0].clientX; my=e.touches[0].clientY; } else { mx=e.clientX; my=e.clientY; } }
-    window.addEventListener('mousemove',move,{passive:true}); window.addEventListener('touchmove',move,{passive:true}); window.addEventListener('resize', resize); resize(); step();
-  })();
-
-  // ---------- Card tilt (mouse + touch) ----------
-  (function tilt(){ const el=qs('#tiltCard'); let rAF; function onMove(x,y){ const rect=el.getBoundingClientRect(); const tx=((x-rect.left)/rect.width-.5)*10; const ty=((y-rect.top)/rect.height-.5)*-10; cancelAnimationFrame(rAF); rAF=requestAnimationFrame(()=>{ el.style.transform = `perspective(1000px) rotateX(${ty}deg) rotateY(${tx}deg)`; }); }
-    function reset(){ el.style.transform='perspective(1000px) rotateX(0) rotateY(0)'; }
-    el.addEventListener('mousemove', e=>onMove(e.clientX,e.clientY));
-    el.addEventListener('mouseleave', reset);
-    el.addEventListener('touchstart', e=>onMove(e.touches[0].clientX,e.touches[0].clientY), {passive:true});
-    el.addEventListener('touchmove', e=>onMove(e.touches[0].clientX,e.touches[0].clientY), {passive:true});
-    el.addEventListener('touchend', reset);
-  })();
-
-  // ---------- 3D: Low‑poly tree with OrbitControls ----------
-  let renderer, scene, camera, controls, treeGroup;
-  function init3D(){
-    const canvas = qs('#tree3d');
-    renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
-
-    scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 100);
-    camera.position.set(2.2, 1.8, 3.2);
-
-    controls = new THREE.OrbitControls(camera, canvas);
-    controls.enableDamping = true; controls.enablePan=false; controls.minDistance=2; controls.maxDistance=6; controls.autoRotate=true; controls.autoRotateSpeed=0.8;
-
-    // Lights
-    const amb = new THREE.AmbientLight(0xaad5c0, 0.8); scene.add(amb);
-    const dir = new THREE.DirectionalLight(0xffffff, 0.9); dir.position.set(2,3,2); scene.add(dir);
-
-    // Ground
-    const ground = new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.2,0.1,32), new THREE.MeshStandardMaterial({color:0x174d34, metalness:.1, roughness:.9}));
-    ground.position.y=-0.55; scene.add(ground);
-
-    // Tree group
-    treeGroup = new THREE.Group(); scene.add(treeGroup);
-    const trunkMat = new THREE.MeshStandardMaterial({color:0x7a5f3a, roughness:.9});
-    const leafMat  = new THREE.MeshStandardMaterial({color:0x27ae60, roughness:.6, metalness:.05});
-
-    const trunk = new THREE.Mesh(new THREE.CylinderGeometry(0.18,0.25,1.3, 6), trunkMat); trunk.position.y=0.1; treeGroup.add(trunk);
-    const canopy1 = new THREE.Mesh(new THREE.ConeGeometry(0.9,0.9, 7), leafMat); canopy1.position.y=1.2; treeGroup.add(canopy1);
-    const canopy2 = new THREE.Mesh(new THREE.ConeGeometry(0.7,0.7, 7), leafMat); canopy2.position.y=1.7; treeGroup.add(canopy2);
-    const canopy3 = new THREE.Mesh(new THREE.ConeGeometry(0.5,0.55,7), leafMat); canopy3.position.y=2.1; treeGroup.add(canopy3);
-
-    // Gentle floating
-    const clock = new THREE.Clock();
-    function animate(){
-      const t = clock.getElapsedTime();
-      treeGroup.position.y = Math.sin(t*0.8)*0.02;
-      controls.update();
-      renderer.render(scene, camera);
-      requestAnimationFrame(animate);
+    if (!tree) {
+      document.getElementById("tree-info").innerHTML = "<p>Tree not found.</p>";
+      return;
     }
-    animate();
 
-    // Resize handling
-    function onResize(){ const {clientWidth:cw, clientHeight:ch}=canvas; renderer.setSize(cw, ch, false); camera.aspect=cw/ch; camera.updateProjectionMatrix(); }
-    const ro = new ResizeObserver(()=>onResize()); ro.observe(canvas);
-  }
-
-  // ---------- Data loading (with fallback) ----------
-  const FALLBACK_DATA = [
-    { id:1, name:"Neem Tree", image:"neem.jpg", scientific_name:"Azadirachta indica", family:"Meliaceae", native_region:["India","Myanmar","Bangladesh","Pakistan"], height_meters:"15 to 20", notable_features:{ fragrance:"Distinct bitter aroma from leaves and bark", medicinal_pods:"Seeds and leaves with antibacterial properties" }, lifespan_years:"150–200", status:{ conservation_status:"Least Concern", native_range:"Indian subcontinent" }, traditional_medicinal_uses:["Neem leaves used for skin ailments","Twigs used as toothbrush (datun)","Oil as natural pesticide"], safety_note:"Neem oil and seeds can be toxic if ingested in large quantities, especially for children." },
-    { id:3, name:"Golden Shower Tree", image:"golden_shower.jpg", scientific_name:"Cassia fistula", family:"Fabaceae", native_region:["India","Sri Lanka","Nepal"], height_meters:"10 to 20", notable_features:{ fragrance:"Mildly sweet scent that attracts bees and butterflies", medicinal_pods:"Long cylindrical seed pods used in traditional medicine" }, lifespan_years:"30–40", status:{ conservation_status:"Least Concern", native_range:"Indian subcontinent and Southeast Asia" }, traditional_medicinal_uses:["Pulp used as mild laxative","Flower infusions in traditional remedies"], safety_note:"Pods should not be consumed without proper guidance; excessive intake may cause discomfort." }
-  ];
-
-  async function fetchTrees(){
-    try{
-      const res = await fetch('data.json', {cache:'no-store'});
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      const data = await res.json();
-      if(!Array.isArray(data)) throw new Error('data.json is not an array');
-      return data;
-    }catch(err){
-      console.warn('Falling back to inline data. Reason:', err);
-      return FALLBACK_DATA;
-    }
-  }
-
-  function renderTree(tree){
-    const wrap = qs('#tree-card'); const badge = qs('#badge'); const meta = qs('#meta-row');
-    if(!tree){ wrap.innerHTML = '<p>Tree not found.</p>'; badge.textContent='Not found'; return; }
-
-    badge.textContent = 'ID #'+tree.id;
-
-    // Chips on the side
-    meta.innerHTML = ''+
-      `<span class="chip">Family: ${escapeHTML(tree.family||'—')}</span>`+
-      `<span class="chip">Height: ${escapeHTML(tree.height_meters||'—')} m</span>`+
-      `<span class="chip">Region: ${escapeHTML(safeJoin(tree.native_region))}</span>`;
-
-    // Main card content
-    const uses = (tree.traditional_medicinal_uses||[]).map(u=>`<li>${escapeHTML(u)}</li>`).join('');
-    wrap.innerHTML = `
-      <h1>${escapeHTML(tree.name)}</h1>
-      <div class="meta-row" style="margin:8px 0 12px">
-        <span class="chip">${escapeHTML(tree.scientific_name)}</span>
-        <span class="chip">${escapeHTML(tree.family)}</span>
-      </div>
-      <div class="status">
-        <p><strong>Conservation Status:</strong> ${escapeHTML(tree.status?.conservation_status||'—')}</p>
-        <p><strong>Native Range:</strong> ${escapeHTML(tree.status?.native_range||safeJoin(tree.native_region))}</p>
-      </div>
+    document.getElementById("tree-info").innerHTML = 
+      <h1>${tree.name}</h1>
+      <img src="${tree.image}" alt="${tree.name}" class="tree-image">
+      <p><strong>Scientific Name:</strong> ${tree.scientific_name}</p>
+      <p><strong>Family:</strong> ${tree.family}</p>
+      <p><strong>Native Region:</strong> ${tree.native_region.join(", ")}</p>
+      <p><strong>Height:</strong> ${tree.height_meters} meters</p>
+      
       <h2>Notable Features</h2>
       <ul>
-        <li><strong>Fragrance:</strong> ${escapeHTML(tree.notable_features?.fragrance||'—')}</li>
-        <li><strong>Medicinal Pods:</strong> ${escapeHTML(tree.notable_features?.medicinal_pods||'—')}</li>
+        <li><strong>Fragrance:</strong> ${tree.notable_features.fragrance}</li>
+        <li><strong>Medicinal Pods:</strong> ${tree.notable_features.medicinal_pods}</li>
       </ul>
+
       <h2>Lifespan</h2>
-      <p>${escapeHTML(tree.lifespan_years||'—')} years</p>
+      <p>${tree.lifespan_years} years</p>
+
+      <h2>Status</h2>
+      <div class="status">
+        <p><strong>Conservation Status:</strong> ${tree.status.conservation_status}</p>
+        <p><strong>Native Range:</strong> ${tree.status.native_range}</p>
+      </div>
+
       <h2>Traditional Medicinal Uses</h2>
-      <ul>${uses}</ul>
+      <ul>
+        ${tree.traditional_medicinal_uses.map(use => <li>${use}</li>).join("")}
+      </ul>
+
       <h2>Safety Note</h2>
-      <p>${escapeHTML(tree.safety_note||'—')}</p>
-    `;
-
-    // Attempt to tint 3D foliage color to match brand accent on hover of chips
-    qsa('.chip').forEach(ch=>{
-      ch.addEventListener('mouseenter', ()=>tintLeaves(true));
-      ch.addEventListener('mouseleave', ()=>tintLeaves(false));
-      ch.addEventListener('touchstart', ()=>tintLeaves(true), {passive:true});
-      ch.addEventListener('touchend', ()=>tintLeaves(false));
-    });
+      <p>${tree.safety_note}</p>
+    ;
+  } catch (error) {
+    console.error("Error loading tree data:", error);
+    document.getElementById("tree-info").innerHTML = "<p>Error loading tree data.</p>";
   }
+}
 
-  function tintLeaves(on){
-    if(!treeGroup) return;
-    treeGroup.traverse(m=>{ if(m.isMesh && m.material && m.material.color && m.material.color.getHexString){ if(on){ m.material.color.offsetHSL(0.05, .1, .05); } else { /* reset via simple reassign */ m.material.color.set(m.geometry.type==='ConeGeometry'?0x27ae60:0x7a5f3a); } }});
-  }
+loadTree();
+</script>
 
-  // ---------- Bootstrap ----------
-  async function boot(){
-    init3D();
-    const id = getId();
-    const trees = await fetchTrees();
-    const tree = trees.find(t=>Number(t.id)===id);
-    renderTree(tree);
-
-    // If an image exists, overlay it in 3D corner as miniature (optional)
-    // (kept minimal to ensure single-file works without assets)
-  }
-  boot();
-  </script>
 </body>
 </html>
