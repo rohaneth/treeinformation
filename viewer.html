@@ -11,7 +11,12 @@
     body {
       background: linear-gradient(to bottom right, #e0f7fa, #e8f5e9);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
     }
 
     .scene {
@@ -19,7 +24,6 @@
       max-width: 400px;
       height: 90vw;
       max-height: 400px;
-      margin: 40px auto;
       perspective: 1200px;
       cursor: grab;
     }
@@ -30,12 +34,7 @@
       position: relative;
       transform-style: preserve-3d;
       transform: rotateX(-20deg) rotateY(30deg);
-      transition: transform 0.5s;
-      animation: spin 20s infinite linear;
-    }
-
-    .cube:active {
-      cursor: grabbing;
+      transition: transform 0.2s ease-out;
     }
 
     .face {
@@ -45,13 +44,14 @@
       background: white;
       border: 2px solid #ddd;
       border-radius: 1rem;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 16px;
       box-sizing: border-box;
       text-align: center;
+      overflow: hidden;
     }
 
     .face img {
@@ -65,6 +65,13 @@
       font-size: 1.25rem;
       font-weight: bold;
       margin-bottom: 8px;
+      color: #065f46;
+    }
+
+    .face p {
+      font-size: 0.95rem;
+      line-height: 1.4rem;
+      color: #374151;
     }
 
     /* Cube faces */
@@ -74,17 +81,12 @@
     .left   { transform: rotateY(-90deg) translateZ(200px); }
     .top    { transform: rotateX(90deg) translateZ(200px); }
     .bottom { transform: rotateX(-90deg) translateZ(200px); }
-
-    @keyframes spin {
-      from { transform: rotateX(-20deg) rotateY(0deg); }
-      to   { transform: rotateX(-20deg) rotateY(360deg); }
-    }
   </style>
 </head>
 <body>
 
-  <h1 class="text-3xl font-bold text-center mt-6">🌳 Tree Information Viewer</h1>
-  <p class="text-center text-gray-600 mb-6">Drag (mouse/touch) to explore the cube</p>
+  <h1 class="text-3xl font-bold text-center mb-2 text-green-800">🌳 Tree Information Viewer</h1>
+  <p class="text-center text-gray-600 mb-6 px-4">Drag with your finger or mouse to rotate the cube and explore details.</p>
 
   <div class="scene">
     <div id="cube" class="cube"></div>
@@ -159,7 +161,7 @@
       `;
     }
 
-    // Desktop + Mobile drag/touch rotation
+    // Drag + Touch rotation
     let cubeEl, isDragging = false, startX, startY, rotX = -20, rotY = 30;
 
     function enableDrag() {
@@ -169,7 +171,6 @@
         isDragging = true;
         startX = x;
         startY = y;
-        cubeEl.style.animationPlayState = "paused";
       }
 
       function moveDrag(x, y) {
@@ -178,8 +179,8 @@
         let dy = y - startY;
         startX = x;
         startY = y;
-        rotX -= dy * 0.5;
-        rotY += dx * 0.5;
+        rotX -= dy * 0.4;
+        rotY += dx * 0.4;
         cubeEl.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
       }
 
@@ -187,12 +188,12 @@
         isDragging = false;
       }
 
-      // Mouse events
+      // Mouse
       cubeEl.parentElement.addEventListener("mousedown", e => startDrag(e.clientX, e.clientY));
       window.addEventListener("mousemove", e => moveDrag(e.clientX, e.clientY));
       window.addEventListener("mouseup", endDrag);
 
-      // Touch events
+      // Touch
       cubeEl.parentElement.addEventListener("touchstart", e => {
         if (e.touches.length === 1) {
           startDrag(e.touches[0].clientX, e.touches[0].clientY);
