@@ -9,21 +9,45 @@
 
   <style>
     body {
-      background: linear-gradient(to bottom right, #e0f7fa, #e8f5e9);
+      background: linear-gradient(135deg, #e0f2fe, #ecfdf5);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
       margin: 0;
     }
 
+    /* Navbar */
+    .navbar {
+      background: linear-gradient(90deg, #0d9488, #2563eb);
+      color: white;
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .navbar img {
+      height: 50px;
+      width: auto;
+    }
+    .navbar h1 {
+      font-size: 1.25rem;
+      font-weight: bold;
+      text-align: center;
+    }
+    .navbar p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    /* Scene and Cube */
     .scene {
       width: 90vw;
-      max-width: 400px;
+      max-width: 420px;
       height: 90vw;
-      max-height: 400px;
+      max-height: 420px;
+      margin: 60px auto;
       perspective: 1200px;
       cursor: grab;
     }
@@ -42,7 +66,6 @@
       width: 100%;
       height: 100%;
       background: white;
-      border: 2px solid #ddd;
       border-radius: 1rem;
       box-shadow: 0 6px 20px rgba(0,0,0,0.2);
       display: flex;
@@ -51,7 +74,12 @@
       padding: 16px;
       box-sizing: border-box;
       text-align: center;
-      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .face:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     }
 
     .face img {
@@ -65,28 +93,39 @@
       font-size: 1.25rem;
       font-weight: bold;
       margin-bottom: 8px;
-      color: #065f46;
+      color: #0d9488;
     }
 
-    .face p {
+    .face p, .face li {
       font-size: 0.95rem;
       line-height: 1.4rem;
       color: #374151;
     }
 
     /* Cube faces */
-    .front  { transform: rotateY(0deg) translateZ(200px); }
-    .back   { transform: rotateY(180deg) translateZ(200px); }
-    .right  { transform: rotateY(90deg) translateZ(200px); }
-    .left   { transform: rotateY(-90deg) translateZ(200px); }
-    .top    { transform: rotateX(90deg) translateZ(200px); }
-    .bottom { transform: rotateX(-90deg) translateZ(200px); }
+    .front  { transform: rotateY(0deg) translateZ(210px); background: #fefce8; }
+    .back   { transform: rotateY(180deg) translateZ(210px); background: #f0f9ff; }
+    .right  { transform: rotateY(90deg) translateZ(210px); background: #fef2f2; }
+    .left   { transform: rotateY(-90deg) translateZ(210px); background: #f0fdf4; }
+    .top    { transform: rotateX(90deg) translateZ(210px); background: #fff7ed; }
+    .bottom { transform: rotateX(-90deg) translateZ(210px); background: #faf5ff; }
   </style>
 </head>
 <body>
 
-  <h1 class="text-3xl font-bold text-center mb-2 text-green-800">🌳 Tree Information Viewer</h1>
-  <p class="text-center text-gray-600 mb-6 px-4">Drag with your finger or mouse to rotate the cube and explore details.</p>
+  <!-- Navbar -->
+  <div class="navbar">
+    <img src="clg_logo.jpg" alt="College Logo">
+    <div>
+      <h1>Shri Guru Gobind Singhji Institute of Engineering and Technology</h1>
+      <p>Department of Electronics & Telecommunication Engineering – Team Elite</p>
+    </div>
+    <img src="Iclub_logo.jpg" alt="Club Logo">
+  </div>
+
+  <!-- Cube Section -->
+  <h2 class="text-2xl font-bold text-center mt-6 text-green-700">🌳 Tree Information Viewer</h2>
+  <p class="text-center text-gray-600 mb-4 px-4">Rotate with your finger or mouse to explore each face of the cube.</p>
 
   <div class="scene">
     <div id="cube" class="cube"></div>
