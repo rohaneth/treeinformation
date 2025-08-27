@@ -1,132 +1,117 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tree Information Viewer</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #f7f9fc;
-    margin: 0;
-    padding: 0;
-    color: #2d2d2d;
-  }
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #2e7d32;
-    padding: 10px 20px;
-    color: white;
-  }
-  header img {
-    height: 50px;
-  }
-  main {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  .tree-image {
-    width: 100%;
-    max-height: 400px;
-    object-fit: contain;
-    margin-bottom: 20px;
-    border-radius: 6px;
-  }
-  h1 {
-    color: #1b5e20;
-    margin-bottom: 10px;
-  }
-  h2 {
-    margin-top: 20px;
-    color: #388e3c;
-  }
-  ul {
-    margin: 0;
-    padding-left: 20px;
-  }
-  .status {
-    background-color: #e8f5e9;
-    padding: 10px;
-    border-left: 4px solid #2e7d32;
-    margin-bottom: 20px;
-  }
-</style>
+  <meta charset="UTF-8">
+  <title>Tree Information Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(to bottom right, #f0fdf4, #e0f2fe);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .card {
+      perspective: 1000px;
+    }
+    .card-inner {
+      transition: transform 0.8s;
+      transform-style: preserve-3d;
+    }
+    .card:hover .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    .card-front {
+      background: white;
+    }
+    .card-back {
+      background: #fefce8;
+      transform: rotateY(180deg);
+    }
+  </style>
 </head>
-<body>
+<body class="p-6">
 
-<header>
-  <img src="clg_logo.jpg" alt="College Logo">
-  <h2>Tree Information Club</h2>
-  <img src="club_logo.jpg" alt="Club Logo">
-</header>
+  <div id="tree-container" class="max-w-4xl mx-auto"></div>
 
-<main>
-  <div id="tree-info">
-    <p>Loading tree data...</p>
-  </div>
-</main>
+  <script>
+    async function loadTreeData() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = parseInt(urlParams.get("id"));
 
-<script>
-async function loadTree() {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const treeId = parseInt(params.get("id"), 10);
+      try {
+        const response = await axios.get("data.json");
+        const treeData = response.data.find(item => item.id === id);
 
-    const response = await fetch("data.json");
-    const trees = await response.json();
+        if (!treeData) {
+          document.getElementById("tree-container").innerHTML =
+            `<p class="text-red-500 text-xl text-center">Tree not found</p>`;
+          return;
+        }
 
-    const tree = trees.find(t => t.id === treeId);
-
-    if (!tree) {
-      document.getElementById("tree-info").innerHTML = "<p>Tree not found.</p>";
-      return;
+        renderTree(treeData);
+      } catch (error) {
+        document.getElementById("tree-container").innerHTML =
+          `<p class="text-red-500 text-xl text-center">Error loading data</p>`;
+      }
     }
 
-    document.getElementById("tree-info").innerHTML = 
-      <h1>${tree.name}</h1>
-      <img src="${tree.image}" alt="${tree.name}" class="tree-image">
-      <p><strong>Scientific Name:</strong> ${tree.scientific_name}</p>
-      <p><strong>Family:</strong> ${tree.family}</p>
-      <p><strong>Native Region:</strong> ${tree.native_region.join(", ")}</p>
-      <p><strong>Height:</strong> ${tree.height_meters} meters</p>
-      
-      <h2>Notable Features</h2>
-      <ul>
-        <li><strong>Fragrance:</strong> ${tree.notable_features.fragrance}</li>
-        <li><strong>Medicinal Pods:</strong> ${tree.notable_features.medicinal_pods}</li>
-      </ul>
+    function renderTree(tree) {
+      const container = document.getElementById("tree-container");
+      container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Image Card -->
+          <div class="card h-96 relative">
+            <div class="card-inner relative w-full h-full">
+              <div class="card-front flex items-center justify-center">
+                <img src="${tree.image}" alt="${tree.name}" class="object-cover w-full h-full">
+              </div>
+              <div class="card-back p-6 overflow-y-auto">
+                <h2 class="text-2xl font-bold mb-4">Notable Features</h2>
+                <ul class="space-y-2">
+                  <li><b>Fragrance:</b> ${tree.notable_features.fragrance}</li>
+                  <li><b>Medicinal Pods:</b> ${tree.notable_features.medicinal_pods}</li>
+                </ul>
+              </div>
+            </div>
+          </div>
 
-      <h2>Lifespan</h2>
-      <p>${tree.lifespan_years} years</p>
+          <!-- Info Card -->
+          <div class="card h-96 relative">
+            <div class="card-inner relative w-full h-full">
+              <div class="card-front p-6">
+                <h1 class="text-3xl font-bold mb-4">${tree.name}</h1>
+                <p class="italic mb-2">${tree.scientific_name}</p>
+                <p><b>Family:</b> ${tree.family}</p>
+                <p><b>Native Region:</b> ${tree.native_region.join(", ")}</p>
+                <p><b>Height:</b> ${tree.height_meters} meters</p>
+                <p><b>Lifespan:</b> ${tree.lifespan_years} years</p>
+                <p><b>Status:</b> ${tree.status.conservation_status} (${tree.status.native_range})</p>
+              </div>
+              <div class="card-back p-6 overflow-y-auto">
+                <h2 class="text-2xl font-bold mb-4">Traditional Medicinal Uses</h2>
+                <ul class="list-disc pl-5 space-y-2">
+                  ${tree.traditional_medicinal_uses.map(use => `<li>${use}</li>`).join("")}
+                </ul>
+                <p class="mt-4 text-yellow-700"><b>Safety Note:</b> ${tree.safety_note}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
 
-      <h2>Status</h2>
-      <div class="status">
-        <p><strong>Conservation Status:</strong> ${tree.status.conservation_status}</p>
-        <p><strong>Native Range:</strong> ${tree.status.native_range}</p>
-      </div>
-
-      <h2>Traditional Medicinal Uses</h2>
-      <ul>
-        ${tree.traditional_medicinal_uses.map(use => <li>${use}</li>).join("")}
-      </ul>
-
-      <h2>Safety Note</h2>
-      <p>${tree.safety_note}</p>
-    ;
-  } catch (error) {
-    console.error("Error loading tree data:", error);
-    document.getElementById("tree-info").innerHTML = "<p>Error loading tree data.</p>";
-  }
-}
-
-loadTree();
-</script>
-
+    loadTreeData();
+  </script>
 </body>
 </html>
