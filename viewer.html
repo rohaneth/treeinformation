@@ -9,47 +9,37 @@
 
   <style>
     body {
-      background: linear-gradient(135deg, #e0f2fe, #ecfdf5);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      margin: 0;
+      background: linear-gradient(135deg, #e0f2fe, #f0fdf4);
+      font-family: 'Segoe UI', sans-serif;
+      overflow-x: hidden;
     }
 
     /* Navbar */
     .navbar {
-      background: linear-gradient(90deg, #0d9488, #2563eb);
+      background: linear-gradient(90deg, #2563eb, #1e40af);
       color: white;
       padding: 0.5rem 1rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      position: sticky;
-      top: 0;
-      z-index: 50;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
     .navbar img {
-      height: 50px;
-      width: auto;
+      height: 40px;
+      margin-right: 10px;
     }
-    .navbar h1 {
-      font-size: 1.25rem;
+    .navbar-title {
+      font-size: 1rem;
       font-weight: bold;
-      text-align: center;
-    }
-    .navbar p {
-      font-size: 0.85rem;
-      opacity: 0.9;
     }
 
-    /* Scene and Cube */
+    /* Cube container */
     .scene {
-      width: 90vw;
-      max-width: 420px;
-      height: 90vw;
-      max-height: 420px;
+      width: 320px;
+      height: 320px;
       margin: 60px auto;
       perspective: 1200px;
-      cursor: grab;
+      touch-action: none;
     }
 
     .cube {
@@ -57,78 +47,77 @@
       height: 100%;
       position: relative;
       transform-style: preserve-3d;
-      transform: rotateX(-20deg) rotateY(30deg);
+      transform: rotateX(-20deg) rotateY(20deg);
       transition: transform 0.2s ease-out;
     }
 
     .face {
       position: absolute;
-      width: 100%;
-      height: 100%;
-      background: white;
-      border-radius: 1rem;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      width: 300px;
+      height: 300px;
       padding: 16px;
-      box-sizing: border-box;
-      text-align: center;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .face:hover {
-      transform: scale(1.05);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow-y: auto;
     }
 
     .face img {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 1rem;
+      width: 100%;
+      height: 100%;
       object-fit: cover;
+      border-radius: 12px;
     }
 
-    .face h2 {
-      font-size: 1.25rem;
-      font-weight: bold;
-      margin-bottom: 8px;
-      color: #0d9488;
-    }
+    /* Position cube faces */
+    .front  { transform: rotateY(0deg) translateZ(150px); }
+    .back   { transform: rotateY(180deg) translateZ(150px); }
+    .right  { transform: rotateY(90deg) translateZ(150px); }
+    .left   { transform: rotateY(-90deg) translateZ(150px); }
+    .top    { transform: rotateX(90deg) translateZ(150px); }
+    .bottom { transform: rotateX(-90deg) translateZ(150px); }
 
-    .face p, .face li {
-      font-size: 0.95rem;
-      line-height: 1.4rem;
-      color: #374151;
-    }
+    /* Face colors */
+    .front  { background: #fef9c3; }
+    .back   { background: #e0f2fe; }
+    .right  { background: #f0fdf4; }
+    .left   { background: #fae8ff; }
+    .top    { background: #fef2f2; }
+    .bottom { background: #ede9fe; }
 
-    /* Cube faces */
-    .front  { transform: rotateY(0deg) translateZ(210px); background: #fefce8; }
-    .back   { transform: rotateY(180deg) translateZ(210px); background: #f0f9ff; }
-    .right  { transform: rotateY(90deg) translateZ(210px); background: #fef2f2; }
-    .left   { transform: rotateY(-90deg) translateZ(210px); background: #f0fdf4; }
-    .top    { transform: rotateX(90deg) translateZ(210px); background: #fff7ed; }
-    .bottom { transform: rotateX(-90deg) translateZ(210px); background: #faf5ff; }
+    /* Text */
+    h1, h2 { font-weight: 700; }
+    p, li { font-size: 0.9rem; line-height: 1.4; }
   </style>
 </head>
 <body>
 
   <!-- Navbar -->
   <div class="navbar">
-    <img src="clg_logo.jpg" alt="College Logo">
-    <div>
-      <h1>Shri Guru Gobind Singhji Institute of Engineering and Technology</h1>
-      <p>Department of Electronics & Telecommunication Engineering – Team Elite</p>
+    <div class="flex items-center">
+      <img src="clg_logo.jpg" alt="College Logo">
+      <span class="navbar-title">Shri Guru Gobind Singhji Institute of Engineering and Technology (SGGSIET)</span>
     </div>
-    <img src="Iclub_logo.jpg" alt="Club Logo">
+    <div class="flex items-center">
+      <span class="navbar-title mr-2">Department of Electronics and Telecommunication - Team Elite</span>
+      <img src="club_logo.jpg" alt="Team Logo">
+    </div>
   </div>
 
-  <!-- Cube Section -->
-  <h2 class="text-2xl font-bold text-center mt-6 text-green-700">🌳 Tree Information Viewer</h2>
-  <p class="text-center text-gray-600 mb-4 px-4">Rotate with your finger or mouse to explore each face of the cube.</p>
-
+  <!-- Cube Scene -->
   <div class="scene">
-    <div id="cube" class="cube"></div>
+    <div id="cube" class="cube">
+      <div class="face front" id="front"></div>
+      <div class="face back" id="back"></div>
+      <div class="face right" id="right"></div>
+      <div class="face left" id="left"></div>
+      <div class="face top" id="top"></div>
+      <div class="face bottom" id="bottom"></div>
+    </div>
   </div>
 
   <script>
@@ -140,113 +129,82 @@
         const response = await axios.get("data.json");
         const tree = response.data.find(item => item.id === id);
 
-        if (!tree) {
-          document.getElementById("cube").innerHTML =
-            `<p class="text-red-500 text-xl text-center">Tree not found</p>`;
-          return;
-        }
+        if (!tree) return;
 
-        renderCube(tree);
-      } catch (error) {
-        document.getElementById("cube").innerHTML =
-          `<p class="text-red-500 text-xl text-center">Error loading data</p>`;
+        document.getElementById("front").innerHTML = `<img src="${tree.image}" alt="${tree.name}">`;
+        document.getElementById("back").innerHTML = `
+          <h2 class="text-xl mb-2">Notable Features</h2>
+          <p><b>Fragrance:</b> ${tree.notable_features.fragrance}</p>
+          <p><b>Pods:</b> ${tree.notable_features.medicinal_pods}</p>
+        `;
+        document.getElementById("right").innerHTML = `
+          <h2 class="text-xl mb-2">Basic Info</h2>
+          <p><b>Name:</b> ${tree.name}</p>
+          <p><b>Scientific:</b> ${tree.scientific_name}</p>
+          <p><b>Family:</b> ${tree.family}</p>
+          <p><b>Height:</b> ${tree.height_meters} m</p>
+          <p><b>Lifespan:</b> ${tree.lifespan_years} yrs</p>
+        `;
+        document.getElementById("left").innerHTML = `
+          <h2 class="text-xl mb-2">Native & Status</h2>
+          <p><b>Region:</b> ${tree.native_region.join(", ")}</p>
+          <p><b>Status:</b> ${tree.status.conservation_status}</p>
+          <p><b>Range:</b> ${tree.status.native_range}</p>
+        `;
+        document.getElementById("top").innerHTML = `
+          <h2 class="text-xl mb-2">Medicinal Uses</h2>
+          <ul class="list-disc pl-5">
+            ${tree.traditional_medicinal_uses.map(u => `<li>${u}</li>`).join("")}
+          </ul>
+        `;
+        document.getElementById("bottom").innerHTML = `
+          <h2 class="text-xl mb-2">Safety Note</h2>
+          <p>${tree.safety_note}</p>
+        `;
+      } catch (err) {
+        console.error(err);
       }
     }
 
-    function renderCube(tree) {
-      const cube = document.getElementById("cube");
-      cube.innerHTML = `
-        <div class="face front">
-          <img src="${tree.image}" alt="${tree.name}">
-        </div>
-        <div class="face back">
-          <div>
-            <h2>Notable Features</h2>
-            <p><b>Fragrance:</b> ${tree.notable_features.fragrance}</p>
-            <p><b>Pods:</b> ${tree.notable_features.medicinal_pods}</p>
-          </div>
-        </div>
-        <div class="face right">
-          <div>
-            <h2>${tree.name}</h2>
-            <p><i>${tree.scientific_name}</i></p>
-            <p><b>Family:</b> ${tree.family}</p>
-            <p><b>Height:</b> ${tree.height_meters} m</p>
-          </div>
-        </div>
-        <div class="face left">
-          <div>
-            <h2>Status</h2>
-            <p><b>Conservation:</b> ${tree.status.conservation_status}</p>
-            <p><b>Native Range:</b> ${tree.status.native_range}</p>
-            <p><b>Lifespan:</b> ${tree.lifespan_years} years</p>
-          </div>
-        </div>
-        <div class="face top">
-          <div>
-            <h2>Native Region</h2>
-            <p>${tree.native_region.join(", ")}</p>
-          </div>
-        </div>
-        <div class="face bottom">
-          <div class="overflow-y-auto max-h-full">
-            <h2>Medicinal Uses</h2>
-            <ul class="list-disc pl-4 text-left text-sm">
-              ${tree.traditional_medicinal_uses.map(use => `<li>${use}</li>`).join("")}
-            </ul>
-            <p class="mt-2 text-yellow-700 text-sm"><b>Safety:</b> ${tree.safety_note}</p>
-          </div>
-        </div>
-      `;
+    // Cube rotation logic
+    let cube = document.getElementById("cube");
+    let isDragging = false, startX, startY, rotX = -20, rotY = 20;
+
+    function setRotation(x, y) {
+      cube.style.transform = `rotateX(${x}deg) rotateY(${y}deg)`;
     }
 
-    // Drag + Touch rotation
-    let cubeEl, isDragging = false, startX, startY, rotX = -20, rotY = 30;
+    cube.parentElement.addEventListener("mousedown", e => {
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+    });
+    window.addEventListener("mouseup", () => isDragging = false);
+    window.addEventListener("mousemove", e => {
+      if (!isDragging) return;
+      rotY += (e.clientX - startX) * 0.3;
+      rotX -= (e.clientY - startY) * 0.3;
+      setRotation(rotX, rotY);
+      startX = e.clientX;
+      startY = e.clientY;
+    });
 
-    function enableDrag() {
-      cubeEl = document.getElementById("cube");
+    cube.parentElement.addEventListener("touchstart", e => {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
+    cube.parentElement.addEventListener("touchend", () => isDragging = false);
+    cube.parentElement.addEventListener("touchmove", e => {
+      if (!isDragging) return;
+      rotY += (e.touches[0].clientX - startX) * 0.3;
+      rotX -= (e.touches[0].clientY - startY) * 0.3;
+      setRotation(rotX, rotY);
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    });
 
-      function startDrag(x, y) {
-        isDragging = true;
-        startX = x;
-        startY = y;
-      }
-
-      function moveDrag(x, y) {
-        if (!isDragging) return;
-        let dx = x - startX;
-        let dy = y - startY;
-        startX = x;
-        startY = y;
-        rotX -= dy * 0.4;
-        rotY += dx * 0.4;
-        cubeEl.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-      }
-
-      function endDrag() {
-        isDragging = false;
-      }
-
-      // Mouse
-      cubeEl.parentElement.addEventListener("mousedown", e => startDrag(e.clientX, e.clientY));
-      window.addEventListener("mousemove", e => moveDrag(e.clientX, e.clientY));
-      window.addEventListener("mouseup", endDrag);
-
-      // Touch
-      cubeEl.parentElement.addEventListener("touchstart", e => {
-        if (e.touches.length === 1) {
-          startDrag(e.touches[0].clientX, e.touches[0].clientY);
-        }
-      });
-      cubeEl.parentElement.addEventListener("touchmove", e => {
-        if (e.touches.length === 1) {
-          moveDrag(e.touches[0].clientX, e.touches[0].clientY);
-        }
-      });
-      cubeEl.parentElement.addEventListener("touchend", endDrag);
-    }
-
-    loadTreeData().then(enableDrag);
+    loadTreeData();
   </script>
 </body>
 </html>
