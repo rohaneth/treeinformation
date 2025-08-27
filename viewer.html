@@ -4,45 +4,91 @@
   <meta charset="UTF-8">
   <title>Tree Information Viewer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
   <style>
     body {
-      background: linear-gradient(to bottom right, #f0fdf4, #e0f2fe);
+      background: linear-gradient(to bottom right, #e0f7fa, #e8f5e9);
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow-x: hidden;
     }
-    .card {
-      perspective: 1000px;
+
+    .scene {
+      width: 90vw;
+      max-width: 400px;
+      height: 90vw;
+      max-height: 400px;
+      margin: 40px auto;
+      perspective: 1200px;
+      cursor: grab;
     }
-    .card-inner {
-      transition: transform 0.8s;
+
+    .cube {
+      width: 100%;
+      height: 100%;
+      position: relative;
       transform-style: preserve-3d;
+      transform: rotateX(-20deg) rotateY(30deg);
+      transition: transform 0.5s;
+      animation: spin 20s infinite linear;
     }
-    .card:hover .card-inner {
-      transform: rotateY(180deg);
+
+    .cube:active {
+      cursor: grabbing;
     }
-    .card-front, .card-back {
+
+    .face {
       position: absolute;
       width: 100%;
       height: 100%;
-      backface-visibility: hidden;
-      border-radius: 1rem;
-      overflow: hidden;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-    }
-    .card-front {
       background: white;
+      border: 2px solid #ddd;
+      border-radius: 1rem;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+      text-align: center;
     }
-    .card-back {
-      background: #fefce8;
-      transform: rotateY(180deg);
+
+    .face img {
+      max-width: 100%;
+      max-height: 100%;
+      border-radius: 1rem;
+      object-fit: cover;
+    }
+
+    .face h2 {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    /* Cube faces */
+    .front  { transform: rotateY(0deg) translateZ(200px); }
+    .back   { transform: rotateY(180deg) translateZ(200px); }
+    .right  { transform: rotateY(90deg) translateZ(200px); }
+    .left   { transform: rotateY(-90deg) translateZ(200px); }
+    .top    { transform: rotateX(90deg) translateZ(200px); }
+    .bottom { transform: rotateX(-90deg) translateZ(200px); }
+
+    @keyframes spin {
+      from { transform: rotateX(-20deg) rotateY(0deg); }
+      to   { transform: rotateX(-20deg) rotateY(360deg); }
     }
   </style>
 </head>
-<body class="p-6">
+<body>
 
-  <div id="tree-container" class="max-w-4xl mx-auto"></div>
+  <h1 class="text-3xl font-bold text-center mt-6">🌳 Tree Information Viewer</h1>
+  <p class="text-center text-gray-600 mb-6">Drag (mouse/touch) to explore the cube</p>
+
+  <div class="scene">
+    <div id="cube" class="cube"></div>
+  </div>
 
   <script>
     async function loadTreeData() {
@@ -51,67 +97,116 @@
 
       try {
         const response = await axios.get("data.json");
-        const treeData = response.data.find(item => item.id === id);
+        const tree = response.data.find(item => item.id === id);
 
-        if (!treeData) {
-          document.getElementById("tree-container").innerHTML =
+        if (!tree) {
+          document.getElementById("cube").innerHTML =
             `<p class="text-red-500 text-xl text-center">Tree not found</p>`;
           return;
         }
 
-        renderTree(treeData);
+        renderCube(tree);
       } catch (error) {
-        document.getElementById("tree-container").innerHTML =
+        document.getElementById("cube").innerHTML =
           `<p class="text-red-500 text-xl text-center">Error loading data</p>`;
       }
     }
 
-    function renderTree(tree) {
-      const container = document.getElementById("tree-container");
-      container.innerHTML = `
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <!-- Image Card -->
-          <div class="card h-96 relative">
-            <div class="card-inner relative w-full h-full">
-              <div class="card-front flex items-center justify-center">
-                <img src="${tree.image}" alt="${tree.name}" class="object-cover w-full h-full">
-              </div>
-              <div class="card-back p-6 overflow-y-auto">
-                <h2 class="text-2xl font-bold mb-4">Notable Features</h2>
-                <ul class="space-y-2">
-                  <li><b>Fragrance:</b> ${tree.notable_features.fragrance}</li>
-                  <li><b>Medicinal Pods:</b> ${tree.notable_features.medicinal_pods}</li>
-                </ul>
-              </div>
-            </div>
+    function renderCube(tree) {
+      const cube = document.getElementById("cube");
+      cube.innerHTML = `
+        <div class="face front">
+          <img src="${tree.image}" alt="${tree.name}">
+        </div>
+        <div class="face back">
+          <div>
+            <h2>Notable Features</h2>
+            <p><b>Fragrance:</b> ${tree.notable_features.fragrance}</p>
+            <p><b>Pods:</b> ${tree.notable_features.medicinal_pods}</p>
           </div>
-
-          <!-- Info Card -->
-          <div class="card h-96 relative">
-            <div class="card-inner relative w-full h-full">
-              <div class="card-front p-6">
-                <h1 class="text-3xl font-bold mb-4">${tree.name}</h1>
-                <p class="italic mb-2">${tree.scientific_name}</p>
-                <p><b>Family:</b> ${tree.family}</p>
-                <p><b>Native Region:</b> ${tree.native_region.join(", ")}</p>
-                <p><b>Height:</b> ${tree.height_meters} meters</p>
-                <p><b>Lifespan:</b> ${tree.lifespan_years} years</p>
-                <p><b>Status:</b> ${tree.status.conservation_status} (${tree.status.native_range})</p>
-              </div>
-              <div class="card-back p-6 overflow-y-auto">
-                <h2 class="text-2xl font-bold mb-4">Traditional Medicinal Uses</h2>
-                <ul class="list-disc pl-5 space-y-2">
-                  ${tree.traditional_medicinal_uses.map(use => `<li>${use}</li>`).join("")}
-                </ul>
-                <p class="mt-4 text-yellow-700"><b>Safety Note:</b> ${tree.safety_note}</p>
-              </div>
-            </div>
+        </div>
+        <div class="face right">
+          <div>
+            <h2>${tree.name}</h2>
+            <p><i>${tree.scientific_name}</i></p>
+            <p><b>Family:</b> ${tree.family}</p>
+            <p><b>Height:</b> ${tree.height_meters} m</p>
+          </div>
+        </div>
+        <div class="face left">
+          <div>
+            <h2>Status</h2>
+            <p><b>Conservation:</b> ${tree.status.conservation_status}</p>
+            <p><b>Native Range:</b> ${tree.status.native_range}</p>
+            <p><b>Lifespan:</b> ${tree.lifespan_years} years</p>
+          </div>
+        </div>
+        <div class="face top">
+          <div>
+            <h2>Native Region</h2>
+            <p>${tree.native_region.join(", ")}</p>
+          </div>
+        </div>
+        <div class="face bottom">
+          <div class="overflow-y-auto max-h-full">
+            <h2>Medicinal Uses</h2>
+            <ul class="list-disc pl-4 text-left text-sm">
+              ${tree.traditional_medicinal_uses.map(use => `<li>${use}</li>`).join("")}
+            </ul>
+            <p class="mt-2 text-yellow-700 text-sm"><b>Safety:</b> ${tree.safety_note}</p>
           </div>
         </div>
       `;
     }
 
-    loadTreeData();
+    // Desktop + Mobile drag/touch rotation
+    let cubeEl, isDragging = false, startX, startY, rotX = -20, rotY = 30;
+
+    function enableDrag() {
+      cubeEl = document.getElementById("cube");
+
+      function startDrag(x, y) {
+        isDragging = true;
+        startX = x;
+        startY = y;
+        cubeEl.style.animationPlayState = "paused";
+      }
+
+      function moveDrag(x, y) {
+        if (!isDragging) return;
+        let dx = x - startX;
+        let dy = y - startY;
+        startX = x;
+        startY = y;
+        rotX -= dy * 0.5;
+        rotY += dx * 0.5;
+        cubeEl.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+      }
+
+      function endDrag() {
+        isDragging = false;
+      }
+
+      // Mouse events
+      cubeEl.parentElement.addEventListener("mousedown", e => startDrag(e.clientX, e.clientY));
+      window.addEventListener("mousemove", e => moveDrag(e.clientX, e.clientY));
+      window.addEventListener("mouseup", endDrag);
+
+      // Touch events
+      cubeEl.parentElement.addEventListener("touchstart", e => {
+        if (e.touches.length === 1) {
+          startDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      });
+      cubeEl.parentElement.addEventListener("touchmove", e => {
+        if (e.touches.length === 1) {
+          moveDrag(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      });
+      cubeEl.parentElement.addEventListener("touchend", endDrag);
+    }
+
+    loadTreeData().then(enableDrag);
   </script>
 </body>
 </html>
