@@ -1,7 +1,7 @@
   [{
   "id": 1,
   "name": "Neem Tree ",
-  "image": "neem.jpg",
+  "image": "neem.jpg", 
   "scientific_name": "Azadirachta indica", 
   "family": "Meliaceae",
   "native_region": ["India", "Myanmar", "Bangladesh", "Pakistan"],
